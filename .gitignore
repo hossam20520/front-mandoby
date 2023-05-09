@@ -1,0 +1,22 @@
+# /public/hot
+
+# /public/js/bundle
+# /public/images/vendor
+# /public/js/main.js
+/node_modules
+# /public/hot
+# /public/storage
+# /storage/*.key
+# /storage/framework/sessions
+/vendor
+/db_data
+# .env
+.env.backup
+# composer.lock
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+node_modules.zip
