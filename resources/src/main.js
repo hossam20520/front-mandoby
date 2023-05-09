@@ -43,7 +43,7 @@ var axios = require('axios');
 //   baseURL: 'http://localhost:8000/api/'
 // });
 window.axios = axios;
-window.axios.defaults.baseURL = 'http://localhost:8000/api/';
+window.axios.defaults.baseURL = '/api/';
 
 window.axios.defaults.withCredentials = true;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
