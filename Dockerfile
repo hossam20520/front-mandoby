@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:7.4-cli
 
 RUN apt-get update \
     && apt-get install -y \
@@ -11,6 +11,10 @@ RUN apt-get update \
         pdo_mysql \
         intl \
         zip \
+    && apt-get install -y libpng-dev libjpeg-dev && \
+        docker-php-ext-configure gd --with-jpeg && \
+         docker-php-ext-install gd \
+         docker-php-ext-install bcmath \
     && a2enmod \
         rewrite
 
