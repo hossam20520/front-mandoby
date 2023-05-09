@@ -121,15 +121,15 @@ export default {
       NProgress.set(0.1);
       self.loading = true;
       axios
-        .post("/login",{
-          email: self.email,
+        .post("http://gatway_service:8000/api/v1.0/gateways/client/login",{
+          username: self.email,
           password: self.password
         },
         {
           baseURL: '',
         })
         .then(response => {
-
+          
             this.makeToast(
               "success",
               this.$t("Successfully_Logged_In"),
