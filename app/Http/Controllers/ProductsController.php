@@ -818,7 +818,7 @@ class ProductsController extends BaseController
         // return $data;
 
 
-        $image = $data['product']['ProductModel']['image'];
+        $image = $data['ProductModel']['image'];
 
 
         
@@ -831,27 +831,27 @@ class ProductsController extends BaseController
 
 
         $product = [
-            "code" =>  $data['product']['ProductModel']['code'],
-            "en_title" =>  $data['product']['ProductModel']['en_title']  ,
-            "ar_title" => $data['product']['ProductModel']['ar_title'],
-            "category" => $data['product']['CategoryModel']['ar_title'],
-            "brand" => $data['product']['BrandModel']['ar_title'],
-            "cost" =>  floatval($data['product']['ProductModel']['cost'] ) ,
-            "price" => floatval($data['product']['ProductModel']['price']),
-            "unit" => $data['product']['UnitModel']['ar_title'],
-            "taxe" => $data['product']['ProductModel']['TaxNet'] ,
-            "tax_method" => $data['product']['ProductModel']['tax_method'],
-            "stock_alert" => $data['product']['ProductModel']['stock_alert'],
+            "code" =>  $data['ProductModel']['code'],
+            "en_title" =>  $data['ProductModel']['en_title']  ,
+            "ar_title" => $data['ProductModel']['ar_title'],
+            "category" => $data['CategoryModel']['ar_title'],
+            "brand" => $data['BrandModel']['ar_title'],
+            "cost" =>  floatval($data['ProductModel']['cost'] ) ,
+            "price" => floatval($data['ProductModel']['price']),
+            "unit" => $data['UnitModel']['ar_title'],
+            "taxe" => $data['ProductModel']['TaxNet'] ,
+            "tax_method" => $data['ProductModel']['tax_method'],
+            "stock_alert" => $data['ProductModel']['stock_alert'],
             "is_variant" => false,
             "images" => $iamages,
             "stock" => $data['stock']['qty'],
-            "desc" => $data['product']['ProductModel']['desc'],
+            "desc" => $data['ProductModel']['desc'],
             "discount" => 0,
-            "slug" => $data['product']['ProductModel']['en_title'],
-            "Type_barcode" => $data['product']['ProductModel']['Type_barcode'],
-            "unit_sale_id" => $data['product']['UnitModel']['id'],
-            "unit_purchase_id" => $data['product']['UnitModel']['id'],
-            "note" => $data['product']['ProductModel']['note'],
+            "slug" => $data['ProductModel']['en_title'],
+            "Type_barcode" => $data['ProductModel']['Type_barcode'],
+            "unit_sale_id" => $data['UnitModel']['id'],
+            "unit_purchase_id" => $data['UnitModel']['id'],
+            "note" => $data['ProductModel']['note'],
 
             
         ];
@@ -1012,13 +1012,30 @@ class ProductsController extends BaseController
 
 
 
+
+
+
         $client = new Client();
+
+        // "/api/v1.0/inventorys/numbers/{inventoryID}/{productID}"
+        // $ProductStorage = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/'.$id);
+        // $jsonData = $ProductRespone->getBody();
+        // $data = json_decode($jsonData, true);
+
+
+
         $ProductRespone = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/'.$id);
         $jsonData = $ProductRespone->getBody();
         $data = json_decode($jsonData, true);
-        return $data;
      
-
+      
+        return response()->json([
+            'product' => $data
+    
+            // 'units_sub' => $product_units,
+        ]);
+        
+        
    
 
 
