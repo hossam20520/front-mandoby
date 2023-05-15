@@ -844,7 +844,7 @@ class ProductsController extends BaseController
             "stock_alert" => $data['ProductModel']['stock_alert'],
             "is_variant" => false,
             "images" => $iamages,
-            "stock" => $data['stock']['qty'],
+            "stock" => 0,
             "desc" => $data['ProductModel']['desc'],
             "discount" => 0,
             "slug" => $data['ProductModel']['en_title'],
