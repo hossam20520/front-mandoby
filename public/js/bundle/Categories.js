@@ -1360,7 +1360,7 @@ var render = function () {
                                         _c("b-form-input", {
                                           attrs: {
                                             placeholder: _vm.$t(
-                                              "Enter_ar__name_category"
+                                              "Enter_en_name_category"
                                             ),
                                             state:
                                               _vm.getValidationState(
@@ -1421,12 +1421,12 @@ var render = function () {
                                   return [
                                     _c(
                                       "b-form-group",
-                                      { attrs: { label: _vm.$t("en_title") } },
+                                      { attrs: { label: _vm.$t("ar_title") } },
                                       [
                                         _c("b-form-input", {
                                           attrs: {
                                             placeholder: _vm.$t(
-                                              "Enter_en_name_category"
+                                              "Enter_ar__name_category"
                                             ),
                                             state:
                                               _vm.getValidationState(

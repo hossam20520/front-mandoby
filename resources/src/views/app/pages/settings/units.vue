@@ -71,7 +71,7 @@
 
 
 
-        <!-- en_title -->
+        <!-- ar_title -->
            <b-col md="12">
               <validation-provider
                 name="ar_title"

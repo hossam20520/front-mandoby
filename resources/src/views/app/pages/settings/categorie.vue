@@ -93,7 +93,7 @@
               >
                 <b-form-group :label="$t('en_title')">
                   <b-form-input
-                    :placeholder="$t('Enter_ar__name_category')"
+                    :placeholder="$t('Enter_en_name_category')"
                     :state="getValidationState(validationContext)"
                     aria-describedby="Name-feedback"
                     label="en_title"
@@ -111,9 +111,9 @@
                 :rules="{ required: true}"
                 v-slot="validationContext"
               >
-                <b-form-group :label="$t('en_title')">
+                <b-form-group :label="$t('ar_title')">
                   <b-form-input
-                    :placeholder="$t('Enter_en_name_category')"
+                    :placeholder="$t('Enter_ar__name_category')"
                     :state="getValidationState(validationContext)"
                     aria-describedby="Name-feedback"
                     label="ar_title"
