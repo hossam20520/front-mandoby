@@ -1255,7 +1255,7 @@ class ProductsController extends BaseController
         $brand = json_decode($jsonDataBrand, true);
         
 
-        $image = $data['product']['ProductModel']['image'];
+        $image = $data['ProductModel']['image'];
 
 
         
@@ -1280,28 +1280,28 @@ class ProductsController extends BaseController
         
         
      
-        // return $data['product']['ProductModel']['ar_title'];
+        // return $data['ProductModel']['ar_title'];
         $product = [
-            "en_title" =>  $data['product']['ProductModel']['en_title']  ,
-            "ar_title" => $data['product']['ProductModel']['ar_title'],
-            "desc" => $data['product']['ProductModel']['desc'],
+            "en_title" =>  $data['ProductModel']['en_title']  ,
+            "ar_title" => $data['ProductModel']['ar_title'],
+            "desc" => $data['ProductModel']['desc'],
             "discount" => 0,
-            "slug" => $data['product']['ProductModel']['en_title'],
-            "code" =>  $data['product']['ProductModel']['code'],
-            "Type_barcode" => $data['product']['ProductModel']['Type_barcode'],
-            "price" => $data['product']['ProductModel']['price'],
-            "cost" =>  $data['product']['ProductModel']['cost'],
-            "category_id" => $data['product']['CategoryModel']['id'],
-            "unit_id" => $data['product']['UnitModel']['id'],
-            "brand_id" => $data['product']['BrandModel']['id'],
-            "unit_sale_id" => $data['product']['UnitModel']['id'],
-            "unit_purchase_id" => $data['product']['UnitModel']['id'],
-            "TaxNet" => $data['product']['ProductModel']['TaxNet'] ,
-            "tax_method" => $data['product']['ProductModel']['tax_method'],
+            "slug" => $data['ProductModel']['en_title'],
+            "code" =>  $data['ProductModel']['code'],
+            "Type_barcode" => $data['ProductModel']['Type_barcode'],
+            "price" => $data['ProductModel']['price'],
+            "cost" =>  $data['ProductModel']['cost'],
+            "category_id" => $data['CategoryModel']['id'],
+            "unit_id" => $data['UnitModel']['id'],
+            "brand_id" => $data['BrandModel']['id'],
+            "unit_sale_id" => $data['UnitModel']['id'],
+            "unit_purchase_id" => $data['UnitModel']['id'],
+            "TaxNet" => $data['ProductModel']['TaxNet'] ,
+            "tax_method" => $data['ProductModel']['tax_method'],
             "image" =>  $item['images'],
-            "note" => $data['product']['ProductModel']['note'],
-            "stock_alert" => $data['product']['ProductModel']['stock_alert'],
-            "is_variant" => $data['product']['ProductModel']['is_variant'],
+            "note" => $data['ProductModel']['note'],
+            "stock_alert" => $data['ProductModel']['stock_alert'],
+            "is_variant" => $data['ProductModel']['is_variant'],
             "is_active" => true,
             
         ];
