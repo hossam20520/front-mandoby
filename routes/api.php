@@ -108,8 +108,10 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     //------------------------------------------------------------------\\
 
   
-   
-
+    
+    Route::resource('priceLists', 'PriceListController');
+    Route::resource('priceListsItems', 'PriceListItemsController');
+    Route::post('priceListsItems/update/{id}', 'PriceListItemsController@updateData');
     Route::resource('Products', 'ProductsController');
     Route::get('Products/export/Excel', 'ProductsController@export_Excel');
     Route::post('Products/import/csv', 'ProductsController@import_products');

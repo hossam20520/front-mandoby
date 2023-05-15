@@ -7,11 +7,13 @@ RUN apt-get update \
         libzip-dev \
         zip \
         unzip \
+        libpng-dev \
     && docker-php-ext-install \
         pdo_mysql \
         intl \
         zip \
-    && apt-get install -y git unzip && \
+        gd \
+    && apt-get install -y git unzip  && \
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
     rm composer-setup.php \
@@ -19,6 +21,8 @@ RUN apt-get update \
         rewrite
 
 COPY . /var/www/html
+
+ 
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \

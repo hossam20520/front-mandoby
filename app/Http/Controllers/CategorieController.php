@@ -6,7 +6,9 @@ use App\Models\Category;
 use App\utils\helpers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use \Gumlet\ImageResize;
+use GuzzleHttp\Client;
+use Intervention\Image\ImageManagerStatic as Image;
 class CategorieController extends BaseController
 {
 
@@ -14,6 +16,19 @@ class CategorieController extends BaseController
 
     public function index(Request $request)
     {
+
+        $perPage = intval($request->limit);
+        $skip = intval($request->pagen);
+        $client = new Client(); 
+        $response = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/categorys/pagenation?skip='.$skip.'&limit='.$perPage  );
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return response()->json([
+            'categories' => $data['items'],
+            'totalRows' => $data['total'],
+        ]);
+
+
         $this->authorizeForUser($request->user('api'), 'view', Category::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -49,6 +64,47 @@ class CategorieController extends BaseController
 
     public function store(Request $request)
     {
+
+
+        request()->validate([
+            'ar_title' => 'required',
+            'en_title' => 'required',
+            'code' => 'required',
+        ]);
+
+        if ($request->hasFile('image')) {
+
+            $image = $request->file('image');
+            $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+
+            $image_resize = Image::make($image->getRealPath());
+            $image_resize->resize(200, 200);
+            $image_resize->save(public_path('/images/category/' . $filename));
+           
+        } else {
+            $filename = 'no-image.png';
+        }
+       
+        $obj = [
+        
+                "en_title" => $request['en_title'],
+                "ar_title" => $request['ar_title'],
+                "code" => $request['code'],
+                "image" => $filename
+           
+        ];
+
+        $client = new Client(); 
+        $response = $client->request('POST', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/categorys/' , [
+            'json' => $obj
+        ]);
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return   $data;
+
+
+
+
         $this->authorizeForUser($request->user('api'), 'create', Category::class);
 
         request()->validate([
@@ -74,6 +130,50 @@ class CategorieController extends BaseController
 
     public function update(Request $request, $id)
     {
+        request()->validate([
+            'en_title' => 'required',
+        ]);
+    
+
+        if( $request->updateImage  ){
+            if ($request->hasFile('image')) {
+
+                $image = $request->file('image');
+                $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+    
+                $image_resize = Image::make($image->getRealPath());
+                $image_resize->resize(200, 200);
+                $image_resize->save(public_path('/images/category/' . $filename));
+               
+            } else {
+               
+                $filename =  $request->currentImage;
+            }  
+        }else{
+            $filename =  $request->currentImage;
+        }
+      
+
+
+ 
+                $obj = [
+                
+                    "en_title" => $request->en_title,
+                    "ar_title" => $request->ar_title,
+                    "code" => $request->code,
+                    "image" => $filename
+            
+            ];
+
+            $client = new Client(); 
+            $response = $client->request('PUT', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/categorys/'.$id , [
+                'json' => $obj
+            ]);
+            $jsonData = $response->getBody();
+            $data = json_decode($jsonData, true);
+            return   $data;
+
+
         $this->authorizeForUser($request->user('api'), 'update', Category::class);
 
         request()->validate([
@@ -93,6 +193,12 @@ class CategorieController extends BaseController
 
     public function destroy(Request $request, $id)
     {
+
+           $client = new Client(); 
+            $response = $client->request('DELETE', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/categorys/'.$id);
+            $jsonData = $response->getBody();
+            $data = json_decode($jsonData, true);
+            return   $data;
         $this->authorizeForUser($request->user('api'), 'delete', Category::class);
 
         Category::whereId($id)->update([

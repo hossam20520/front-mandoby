@@ -172,6 +172,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   metaInfo: {
@@ -199,40 +212,27 @@ __webpack_require__.r(__webpack_exports__);
       show_operator: false,
       unit: {
         id: "",
-        name: "",
-        ShortName: "",
-        base_unit: "",
-        base_unit_name: "",
-        operator: "*",
-        operator_value: 1
+        en_title: "",
+        ar_title: "",
+        ShortName: ""
       }
     };
   },
   computed: {
     columns: function columns() {
       return [{
-        label: this.$t("Name"),
-        field: "name",
+        label: this.$t("en_title"),
+        field: "en_title",
+        tdClass: "text-left",
+        thClass: "text-left"
+      }, {
+        label: this.$t("ar_title"),
+        field: "ar_title",
         tdClass: "text-left",
         thClass: "text-left"
       }, {
         label: this.$t("ShortName"),
         field: "ShortName",
-        tdClass: "text-left",
-        thClass: "text-left"
-      }, {
-        label: this.$t("BaseUnit"),
-        field: "base_unit_name",
-        tdClass: "text-left",
-        thClass: "text-left"
-      }, {
-        label: this.$t("Operator"),
-        field: "operator",
-        tdClass: "text-left",
-        thClass: "text-left"
-      }, {
-        label: this.$t("OperationValue"),
-        field: "operator_value",
         tdClass: "text-left",
         thClass: "text-left"
       }, {
@@ -359,8 +359,8 @@ __webpack_require__.r(__webpack_exports__);
       nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.set(0.1);
       axios.get("units?page=" + page + "&SortField=" + this.serverParams.sort.field + "&SortType=" + this.serverParams.sort.type + "&search=" + this.search + "&limit=" + this.limit).then(function (response) {
         _this2.units = response.data.Units;
-        _this2.totalRows = response.data.totalRows;
-        _this2.units_base = response.data.Units_base; // Complete the animation of theprogress bar.
+        _this2.totalRows = response.data.totalRows; // this.units_base = response.data.Units_base;
+        // Complete the animation of theprogress bar.
 
         nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.done();
         _this2.isLoading = false;
@@ -386,11 +386,9 @@ __webpack_require__.r(__webpack_exports__);
       this.SubmitProcessing = true;
       this.setToStrings();
       axios.post("units", {
-        name: this.unit.name,
-        ShortName: this.unit.ShortName,
-        base_unit: this.unit.base_unit,
-        operator: this.unit.operator,
-        operator_value: this.unit.operator_value
+        ar_title: this.unit.ar_title,
+        en_title: this.unit.en_title,
+        ShortName: this.unit.ShortName
       }).then(function (response) {
         _this3.SubmitProcessing = false;
         Fire.$emit("Event_Unit");
@@ -409,11 +407,9 @@ __webpack_require__.r(__webpack_exports__);
       this.SubmitProcessing = true;
       this.setToStrings();
       axios.put("units/" + this.unit.id, {
-        name: this.unit.name,
-        ShortName: this.unit.ShortName,
-        base_unit: this.unit.base_unit,
-        operator: this.unit.operator,
-        operator_value: this.unit.operator_value
+        ar_title: this.unit.ar_title,
+        en_title: this.unit.en_title,
+        ShortName: this.unit.ShortName
       }).then(function (response) {
         _this4.SubmitProcessing = false;
         Fire.$emit("Event_Unit");
@@ -429,12 +425,9 @@ __webpack_require__.r(__webpack_exports__);
     reset_Form: function reset_Form() {
       this.unit = {
         id: "",
-        name: "",
-        ShortName: "",
-        base_unit: "",
-        base_unit_name: "",
-        operator: "*",
-        operator_value: 1
+        ar_title: "",
+        en_title: "",
+        ShortName: ""
       };
     },
     //--------------------------------- Remove Unit --------------------\\
@@ -453,15 +446,14 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           axios["delete"]("units/" + id).then(function (response) {
-            if (response.data.success) {
-              _this5.$swal(_this5.$t("Delete.Deleted"), _this5.$t("Delete.UnitDeleted"), "success");
-            } else {
-              _this5.$swal(_this5.$t("Delete.Failed"), _this5.$t("Unit_already_linked_with_sub_unit"), "warning");
-            }
+            _this5.$swal(_this5.$t("Delete.Deleted"), _this5.$t("Delete.UnitDeleted"), "success");
 
             Fire.$emit("Delete_Unit");
-          })["catch"](function () {
-            _this5.$swal(_this5.$t("Delete.Failed"), _this5.$t("Delete.Therewassomethingwronge"), "warning");
+          })["catch"](function () {// this.$swal(
+            //   this.$t("Delete.Failed"),
+            //   this.$t("Delete.Therewassomethingwronge"),
+            //   "warning"
+            // );
           });
         }
       });
@@ -532,14 +524,6 @@ var render = function () {
                     columns: _vm.columns,
                     totalRows: _vm.totalRows,
                     rows: _vm.units,
-                    "search-options": {
-                      enabled: true,
-                      placeholder: _vm.$t("Search_this_table"),
-                    },
-                    "select-options": {
-                      enabled: true,
-                      clearSelectionText: "",
-                    },
                     "pagination-options": {
                       enabled: true,
                       mode: "records",
@@ -552,7 +536,6 @@ var render = function () {
                     "on-page-change": _vm.onPageChange,
                     "on-per-page-change": _vm.onPerPageChange,
                     "on-sort-change": _vm.onSortChange,
-                    "on-search": _vm.onSearch,
                   },
                   scopedSlots: _vm._u(
                     [
@@ -716,25 +699,96 @@ var render = function () {
                                   return [
                                     _c(
                                       "b-form-group",
-                                      { attrs: { label: _vm.$t("Name") } },
+                                      { attrs: { label: _vm.$t("en_title") } },
                                       [
                                         _c("b-form-input", {
                                           attrs: {
-                                            placeholder:
-                                              _vm.$t("Enter_Name_Unit"),
+                                            placeholder: _vm.$t(
+                                              "en_titleEnter_Name_Unit"
+                                            ),
                                             state:
                                               _vm.getValidationState(
                                                 validationContext
                                               ),
                                             "aria-describedby": "Name-feedback",
-                                            label: "Name",
+                                            label: "en_title",
                                           },
                                           model: {
-                                            value: _vm.unit.name,
+                                            value: _vm.unit.en_title,
                                             callback: function ($$v) {
-                                              _vm.$set(_vm.unit, "name", $$v)
+                                              _vm.$set(
+                                                _vm.unit,
+                                                "en_title",
+                                                $$v
+                                              )
                                             },
-                                            expression: "unit.name",
+                                            expression: "unit.en_title",
+                                          },
+                                        }),
+                                        _vm._v(" "),
+                                        _c(
+                                          "b-form-invalid-feedback",
+                                          { attrs: { id: "Name-feedback" } },
+                                          [
+                                            _vm._v(
+                                              _vm._s(
+                                                validationContext.errors[0]
+                                              )
+                                            ),
+                                          ]
+                                        ),
+                                      ],
+                                      1
+                                    ),
+                                  ]
+                                },
+                              },
+                            ]),
+                          }),
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        { attrs: { md: "12" } },
+                        [
+                          _c("validation-provider", {
+                            attrs: {
+                              name: "ar_title",
+                              rules: { required: true, max: 15 },
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "default",
+                                fn: function (validationContext) {
+                                  return [
+                                    _c(
+                                      "b-form-group",
+                                      { attrs: { label: _vm.$t("ar_title") } },
+                                      [
+                                        _c("b-form-input", {
+                                          attrs: {
+                                            placeholder: _vm.$t(
+                                              "ar_titleEnter_Name_Unit"
+                                            ),
+                                            state:
+                                              _vm.getValidationState(
+                                                validationContext
+                                              ),
+                                            "aria-describedby": "Name-feedback",
+                                            label: "ar_title",
+                                          },
+                                          model: {
+                                            value: _vm.unit.ar_title,
+                                            callback: function ($$v) {
+                                              _vm.$set(
+                                                _vm.unit,
+                                                "ar_title",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "unit.ar_title",
                                           },
                                         }),
                                         _vm._v(" "),
@@ -809,172 +863,6 @@ var render = function () {
                                           "b-form-invalid-feedback",
                                           {
                                             attrs: { id: "ShortName-feedback" },
-                                          },
-                                          [
-                                            _vm._v(
-                                              _vm._s(
-                                                validationContext.errors[0]
-                                              )
-                                            ),
-                                          ]
-                                        ),
-                                      ],
-                                      1
-                                    ),
-                                  ]
-                                },
-                              },
-                            ]),
-                          }),
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-col",
-                        { attrs: { md: "12" } },
-                        [
-                          _c(
-                            "b-form-group",
-                            { attrs: { label: _vm.$t("BaseUnit") } },
-                            [
-                              _c("v-select", {
-                                attrs: {
-                                  reduce: function (label) {
-                                    return label.value
-                                  },
-                                  placeholder: _vm.$t("Choose_Base_Unit"),
-                                  options: _vm.units_base.map(function (
-                                    units_base
-                                  ) {
-                                    return {
-                                      label: units_base.name,
-                                      value: units_base.id,
-                                    }
-                                  }),
-                                },
-                                on: { input: _vm.Selected_Base_Unit },
-                                model: {
-                                  value: _vm.unit.base_unit,
-                                  callback: function ($$v) {
-                                    _vm.$set(_vm.unit, "base_unit", $$v)
-                                  },
-                                  expression: "unit.base_unit",
-                                },
-                              }),
-                            ],
-                            1
-                          ),
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-col",
-                        {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: _vm.show_operator,
-                              expression: "show_operator",
-                            },
-                          ],
-                          attrs: { md: "12" },
-                        },
-                        [
-                          _c(
-                            "b-form-group",
-                            { attrs: { label: _vm.$t("Operator") } },
-                            [
-                              _c("v-select", {
-                                attrs: {
-                                  reduce: function (label) {
-                                    return label.value
-                                  },
-                                  placeholder: _vm.$t("Choose_Operator"),
-                                  options: [
-                                    { label: "Multiply (*)", value: "*" },
-                                    { label: "Divide (/)", value: "/" },
-                                  ],
-                                },
-                                model: {
-                                  value: _vm.unit.operator,
-                                  callback: function ($$v) {
-                                    _vm.$set(_vm.unit, "operator", $$v)
-                                  },
-                                  expression: "unit.operator",
-                                },
-                              }),
-                            ],
-                            1
-                          ),
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-col",
-                        {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: _vm.show_operator,
-                              expression: "show_operator",
-                            },
-                          ],
-                          attrs: { md: "12" },
-                        },
-                        [
-                          _c("validation-provider", {
-                            attrs: {
-                              name: "Operation Value",
-                              rules: { required: true, regex: /^\d*\.?\d*$/ },
-                            },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "default",
-                                fn: function (validationContext) {
-                                  return [
-                                    _c(
-                                      "b-form-group",
-                                      {
-                                        attrs: {
-                                          label: _vm.$t("OperationValue"),
-                                        },
-                                      },
-                                      [
-                                        _c("b-form-input", {
-                                          attrs: {
-                                            placeholder: _vm.$t(
-                                              "Enter_Operation_Value"
-                                            ),
-                                            state:
-                                              _vm.getValidationState(
-                                                validationContext
-                                              ),
-                                            "aria-describedby":
-                                              "Operation-feedback",
-                                            label: "Operation",
-                                          },
-                                          model: {
-                                            value: _vm.unit.operator_value,
-                                            callback: function ($$v) {
-                                              _vm.$set(
-                                                _vm.unit,
-                                                "operator_value",
-                                                $$v
-                                              )
-                                            },
-                                            expression: "unit.operator_value",
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c(
-                                          "b-form-invalid-feedback",
-                                          {
-                                            attrs: { id: "Operation-feedback" },
                                           },
                                           [
                                             _vm._v(

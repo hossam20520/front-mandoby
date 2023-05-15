@@ -1,6 +1,42 @@
 //Language Anglais
 
 export default {
+    en_title:'En Title',
+    Enter_en_title_Product:'Enter EN  Title Product',
+    ar_title:'AR title',
+    Enter_ar_title_Product:'Enter Ar Title Product',
+    desc:'Description',
+    Enter_ar__name_category:'Enter ar Title category',
+    Enter_en_name_category:'Enter Ar  Title category',
+    CategoryImage:'Category Image',
+    PriceLists:'Price List',
+    Enter_ar_name_priceList:'Enter Ar PriceList Name',
+    Enter_en_name_priceList:'Enter EN PriceList Name',
+    is_active:'Is active',
+
+    
+    oldPrice:'Old Price',
+    newPrice:'New Price',
+    discount:'discount',
+    priceListN:'PriceList Name',
+    alreadyExist:'Already Exist',
+    desca:'Description',
+    Enter_ar_Name_Brand:'Enter Ar Company Name',
+    Enter_en_Name_Brand:'Enter En Company Name',
+    en_titleEnter_Name_Unit:'Enter En Unit Name',
+    ar_titleEnter_Name_Unit:'Enter Ar Unit Name',
+    amount:'Amount',
+    amount:'Amount',
+    amount:'Amount',
+    amount:'Amount',
+
+
+
+
+
+
+
+
     amount:'Amount',
     paypackdate:'Pay Pack date',
     customer_def:'Customer',
@@ -106,7 +142,7 @@ export default {
     Choose_Supplier: 'Choose Supplier',
     Choose_Unit_Purchase: 'Choose Purchase Unit',
     Choose_Sub_Category: 'Choose SubCategory',
-    Choose_Brand: 'Choose Brand',
+    Choose_Brand: 'Choose Company',
     Choose_Warehouse: 'Choose Warehouse',
     Choose_Unit_Sale: 'Choose Sale Unit',
     Enter_Product_Cost: 'Enter Product Cost',
@@ -118,8 +154,8 @@ export default {
     Enter_Role_Description: 'Enter Role Description',
     Enter_name_category: 'Enter category Name',
     Enter_Code_category: 'Enter category Code',
-    Enter_Name_Brand: 'Enter Name Brand',
-    Enter_Description_Brand: 'Enter Description Brand',
+    Enter_Name_Brand: 'Enter Name Company',
+    Enter_Description_Brand: 'Enter Description Company',
     Enter_Code_Currency: 'Enter Code Currency',
     Enter_name_Currency: 'Enter name Currency',
     Enter_Symbol_Currency: 'Enter Symbol Currency',
@@ -184,7 +220,7 @@ export default {
     Net_Unit_Cost: 'Net Unit Cost',
     Net_Unit_Price: 'Net Unit Price',
     Edit_Expense: 'Edit Expense',
-    All_Brand: 'All Brand',
+    All_Brand: 'All Company',
     All_Category: 'All Category',
     ListExpenses: 'List Expenses',
     Create_Permission: 'Create Permission',
@@ -455,12 +491,12 @@ export default {
     IncomeExpenses: 'Income & Expenses',
     dailySalesPurchases: 'Daily Sales & Purchases',
     ProductsExpired: 'Products Expired',
-    ListofBrand: 'Brand List',
+    ListofBrand: 'Company List',
     CreateAdjustment: 'Create Adjustment',
     Afewwords: 'A few words ...',
     UserImage: 'User Image',
     UpdateProduct: 'Update Product',
-    Brand: 'Brand',
+    Company: 'Company',
     BarcodeSymbology: 'Barcode Symbology',
     ProductCost: 'Product Cost',
     ProductPrice: 'Product Price',
@@ -491,10 +527,10 @@ export default {
     Received: 'Received',
     Ordered: 'Ordered',
     PermissionsManager: 'Permissions Management',
-    BrandManager: 'Brand',
-    BrandImage: 'Brand Image',
-    BrandName: 'Brand Name',
-    BrandDescription: 'Brand Description',
+    BrandManager: 'Company',
+    BrandImage: 'Company Image',
+    BrandName: 'Company Name',
+    BrandDescription: 'Company Description',
     BaseUnit: 'Base Unit',
     ManagerUnits: 'Units Management',
     OperationValue: 'Operation Value',
@@ -542,12 +578,12 @@ export default {
         TitleCurrency: 'This Currency has been deleted.',
         TitleTransfer: 'The Transfer has been removed successfully',
         BackupDeleted: 'Backup has been removed successfully',
-        TitleBrand: 'This Brand has been deleted',
+        TitleBrand: 'This Company has been deleted',
 
 
     },
     Update: {
-        TitleBrand: 'This Brand has been Updated',
+        TitleBrand: 'This Company has been Updated',
         TitleProfile: 'Your Profile Updated in successfully',
         TitleAdjust: 'Adjustement Updated in successfully',
         TitleRole: 'Role Updated in successfully',
@@ -570,7 +606,7 @@ export default {
     },
 
     Create: {
-        TitleBrand: 'This Brand has been Created',
+        TitleBrand: 'This Company has been Created',
         TitleRole: 'Role Created in successfully',
         TitleUnit: 'Unit Created in successfully',
         TitleUser: 'User Created in successfully',

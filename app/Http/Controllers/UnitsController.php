@@ -6,7 +6,7 @@ use App\Models\Unit;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use GuzzleHttp\Client;
 class UnitsController extends BaseController
 {
 
@@ -14,6 +14,22 @@ class UnitsController extends BaseController
 
     public function index(Request $request)
     {
+    
+        $perPage = intval($request->limit);
+        $skip = intval($request->pagen);
+ 
+        $client = new Client(); 
+        $response = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/units/pagentation?skip='.$skip.'&limit='.$perPage  );
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+
+        return response()->json([
+            'Units' => $data['items'],
+            'totalRows' => $data['total'],
+        ]);
+
+        // http://localhost:8080/api/v1.0/units/pagentation?skip=0&limit=100
+
         $this->authorizeForUser($request->user('api'), 'view', Unit::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -75,6 +91,28 @@ class UnitsController extends BaseController
 
     public function store(Request $request)
     {
+
+        $obj = [
+        
+            "en_title" => $request['en_title'],
+            "ar_title" => $request['ar_title'],
+            "ShortName" => $request['ShortName'],
+            "base_unit" => 0,
+            "operator" =>  "string",
+            "operator_value" =>  0
+         ];
+       
+
+         $client = new Client(); 
+         $response = $client->request('POST', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/units/' , [
+             'json' => $obj
+         ]);
+         $jsonData = $response->getBody();
+         $data = json_decode($jsonData, true);
+         return   $data;
+
+
+
         $this->authorizeForUser($request->user('api'), 'create', Unit::class);
 
         request()->validate([
@@ -106,6 +144,25 @@ class UnitsController extends BaseController
 
     public function update(Request $request, $id)
     {
+
+
+        $obj = [
+        
+            "en_title" => $request['en_title'],
+            "ar_title" => $request['ar_title'],
+            "ShortName" => $request['ShortName'],
+            "base_unit" => 0,
+            "operator" =>  "string",
+            "operator_value" =>  0
+         ];
+
+        $client = new Client(); 
+        $response = $client->request('PUT', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/units/'.$id , [ 'json' => $obj ]);
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return   $data;
+
+
         $this->authorizeForUser($request->user('api'), 'update', Unit::class);
 
         request()->validate([
@@ -139,7 +196,19 @@ class UnitsController extends BaseController
 
     public function destroy(Request $request, $id)
     {
+
+        $client = new Client(); 
+        $response = $client->request('DELETE', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/units/'.$id);
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return   $data;
+
+        
         $this->authorizeForUser($request->user('api'), 'delete', Unit::class);
+
+        
+
+
 
         $Sub_Unit_exist = Unit::where('base_unit', $id)->where('deleted_at', null)->exists();
         if (!$Sub_Unit_exist) {

@@ -25,38 +25,52 @@
           <b-col md="8">
             <table class="table table-hover table-bordered table-md">
               <tbody>
+
                 <tr>
                   <td>{{$t('CodeProduct')}}</td>
                   <th>{{product.code}}</th>
                 </tr>
+
                 <tr>
-                  <td>{{$t('ProductName')}}</td>
-                  <th>{{product.name}}</th>
+                  <td>{{$t('en_title')}}</td>
+                  <th>{{product.en_title}}</th>
                 </tr>
+
+                <tr>
+                  <td>{{$t('ar_title')}}</td>
+                  <th>{{product.ar_title}}</th>
+                </tr>
+
                 <tr>
                   <td>{{$t('Categorie')}}</td>
                   <th>{{product.category}}</th>
                 </tr>
+
                 <tr>
                   <td>{{$t('Brand')}}</td>
                   <th>{{product.brand}}</th>
                 </tr>
+
                 <tr>
                   <td>{{$t('Cost')}}</td>
                   <th>{{currentUser.currency}} {{formatNumber(product.cost ,2)}}</th>
                 </tr>
+
                 <tr>
                   <td>{{$t('Price')}}</td>
                   <th>{{currentUser.currency}} {{formatNumber(product.price ,2)}}</th>
                 </tr>
+
                 <tr>
                   <td>{{$t('Unit')}}</td>
                   <th>{{product.unit}}</th>
                 </tr>
+
                 <tr>
                   <td>{{$t('Tax')}}</td>
                   <th>{{formatNumber(product.taxe ,2)}} %</th>
                 </tr>
+
                 <tr v-if="product.taxe != '0.00'">
                   <td>{{$t('TaxMethod')}}</td>
                   <th>{{product.tax_method}}</th>
@@ -72,7 +86,7 @@
                 <tr v-if="product.is_variant == 'yes'">
                   <td>{{$t('ProductVariant')}}</td>
                   <th>
-                    <span v-for="variant in product.ProductVariant">{{variant}},</span>
+                    <!-- <span v-for="variant in product.ProductVariant">{{variant}},</span> -->
                   </th>
                 </tr>
               </tbody>
@@ -109,15 +123,15 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="PROD_W in product.CountQTY">
-                  <td>{{PROD_W.mag}}</td>
-                  <td>{{formatNumber(PROD_W.qte ,2)}} {{product.unit}}</td>
+                <tr>
+                  <td>المخزن الرئيسي</td>
+                  <td>{{formatNumber(product.stock ,2)}} {{product.unit}}</td>
                 </tr>
               </tbody>
             </table>
           </b-col>
           <!-- Warehouse Variants Quantity -->
-          <b-col md="7" v-if="product.is_variant == 'yes'" class="mt-4">
+          <!-- <b-col md="7" v-if="product.is_variant == 'yes'" class="mt-4">
             <table class="table table-hover table-sm">
               <thead>
                 <tr>
@@ -134,7 +148,7 @@
                 </tr>
               </tbody>
             </table>
-          </b-col>
+          </b-col> -->
         </b-row>
       </b-card-body>
     </b-card>
@@ -200,17 +214,18 @@ export default {
 
     //----------------------------------- Get Details Product ------------------------------\\
     showDetails() {
+      
       let id = this.$route.params.id;
-      axios
-        .get(`Products/Detail/${id}`)
-        .then(response => {
-          this.product = response.data;
+      axios.get(`Products/Detail/${id}`).then(response => {
+          this.product = response.data.product;
+          console.log(this.product)
           this.isLoading = false;
-        })
-        .catch(response => {
+        }).catch(response => {
+          
           setTimeout(() => {
             this.isLoading = false;
           }, 500);
+          
         });
     }
   }, //end Methods

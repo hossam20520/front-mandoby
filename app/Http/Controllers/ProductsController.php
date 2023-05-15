@@ -20,7 +20,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use \Gumlet\ImageResize;
-
+use GuzzleHttp\Client;
+use App\Http\Controllers\ProductAdabtorController;
 class ProductsController extends BaseController
 {
 
@@ -28,7 +29,64 @@ class ProductsController extends BaseController
 
     public function index(request $request)
     {
+        $perPage = intval($request->limit);
+        $skip = intval($request->pagen);
+        
+        $client = new Client(); 
+        $response = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/dashboard/pagentation?skip='.$skip.'&limit='.$perPage  );
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        
+        $ar = [];
+        foreach ($data['items'] as $key => $value) {
+            $filename = explode(",", $value['ProductModel']['image']);
+            $ob = [
+                "id" => $value['ProductModel']['id'],
+                "en_title" =>  $value['ProductModel']['en_title'] ,
+                "ar_title" => $value['ProductModel']['ar_title'] ,
+                "desc" => $value['ProductModel']['desc'] ,
+                "discount" => $value['ProductModel']['discount'],
+                "slug" => $value['ProductModel']['slug'],
+                "code" =>  $value['ProductModel']['code'],
+                "Type_barcode" => $value['ProductModel']['Type_barcode'],
+                "price" => $value['ProductModel']['price'],
+                "cost" => $value['ProductModel']['cost'],
+                "category" =>  $value['CategoryModel']['ar_title'],
+                "unit" => $value['UnitModel']['ar_title'],
+                "brand" => $value['BrandModel']['ar_title'],
+                "TaxNet" => $value['ProductModel']['TaxNet'] ,
+                "tax_method" => $value['ProductModel']['tax_method'],
+                "image" => $filename[0]  ,
+                "note" => $value['ProductModel']['note'],
+                "stock_alert" => $value['ProductModel']['stock_alert'],
+                "is_variant" => $value['ProductModel']['is_variant'],
+                "is_active" => true,
+                
+            ];
+                // $value->ProductModel
+
+                array_push( $ar,  $ob );
+        }
+         
+        return response()->json([
+            'warehouses' => [],
+            'categories' => [],
+            'brands' => [],
+            'products' =>  $ar,
+            'totalRows' => $data['total'],
+        ]);
         $this->authorizeForUser($request->user('api'), 'view', Product::class);
+        // $client = new Client(); 
+        // $response = $client->request('GET', 'http://localhost:8080/api/v1.0/products/?skip=0&limit=100');
+        // $jsonData = $response->getBody();
+        // $data = json_decode($jsonData, true);
+        // return response()->json([
+       
+        
+        //     'products' => $data,
+          
+        // ]);
+       
         // How many items do you want to display.
         $perPage = $request->limit;
         $pageStart = \Request::get('page', 1);
@@ -111,6 +169,118 @@ class ProductsController extends BaseController
 
     public function store(Request $request)
     {
+
+        if ($request['images']) {
+            $files = $request['images'];
+            foreach ($files as $file) {
+                $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
+                $fileData->resize(200, 200);
+                $name = rand(11111111, 99999999) . $file['name'];
+                $path = public_path() . '/images/products/';
+                $success = file_put_contents($path . $name, $fileData);
+                $images[] = $name;
+            }
+            $filename = implode(",", $images);
+        } else {
+            $filename = 'no-image.png';
+        }
+        
+        $ob = [
+            "en_title" =>  $request['en_title'] ,
+            "ar_title" => $request['ar_title'],
+            "desc" =>  ($request['desc'])  ? $request['desc'] : 'lorem'  ,
+            "discount" => 0,
+            "slug" => $request['en_title'],
+            "code" =>  $request['code'],
+            "Type_barcode" => $request['Type_barcode'],
+            "price" => $request['price'],
+            "cost" =>  $request['cost'],
+            "category_id" => $request['category_id'],
+            "unit_id" => $request['unit_id'],
+            "brand_id" => $request['brand_id'],
+            "unit_sale_id" => $request['unit_sale_id'],
+            "unit_purchase_id" => $request['unit_purchase_id'],
+            "TaxNet" => $request['TaxNet'] ,
+            "tax_method" => $request['tax_method'],
+            "image" => $filename,
+            "note" =>  ($request['note'])  ? $request['note'] : 'lorem'  ,
+            "stock_alert" => $request['stock_alert'],
+            "is_variant" => $request['is_variant'],
+            "is_active" => true,
+            
+        ];
+
+      
+
+        $client = new Client(); 
+        $response = $client->request('POST', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/' , [
+            'json' => $ob
+        ]);
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return   $data;
+
+      
+        try {
+            $this->validate($request, [
+                'code' => 'required',
+                'en_title' => 'required',
+                'ar_title' => 'required',
+                'Type_barcode' => 'required',
+                'price' => 'required',
+                'category_id' => 'required',
+                'cost' => 'required',
+                'unit_id' => 'required',
+            ], [
+                'code.unique' => 'This code already used. Generate Now',
+                'code.required' => 'This field is required',
+            ]);
+
+        //    send request for pdoduct here 
+
+        // $client = new Client(); 
+        // $response = $client->request('GET', 'http://localhost:8080/api/v1.0/products/?skip=0&limit=100');
+        // $jsonData = $response->getBody();
+        // $data = json_decode($jsonData, true);
+
+        if ($request['is_variant'] == 'true') {
+            foreach ($request['variants'] as $variant) {
+                $Product_variants_data[] = [
+                    'product_id' => 5,
+                    'name' => $variant,
+                ];
+            }
+
+            return $Product_variants_data;
+            //  TODO: 
+            // add product variants here 
+            // ProductVariant::insert($Product_variants_data);
+
+        }
+
+
+        return response()->json(['success' => true]);
+
+    } catch (ValidationException $e) {
+        return response()->json([
+            'status' => 422,
+            'msg' => 'error',
+            'errors' => $e->errors(),
+        ], 422);
+    }
+    
+        // $adabtor  = new ProductAdabtorController();
+
+        // $data = $adabtor->Save($request);
+        // $json = $adabtor->json();
+        // return $json;
+
+
+        // $client = new Client(); 
+        // $response = $client->request('GET', 'http://localhost:8080/api/v1.0/products/?skip=0&limit=100');
+        // $jsonData = $response->getBody();
+        // $data = json_decode($jsonData, true);
+
         $this->authorizeForUser($request->user('api'), 'create', Product::class);
 
         try {
@@ -226,6 +396,85 @@ class ProductsController extends BaseController
 
     public function update(Request $request, $id)
     {
+
+
+        $id = intval($id);
+        if ($request['images'] === null) {
+
+            if ($request['image'] !== null) {
+                foreach (explode(',', $request['image']) as $img) {
+                    $pathIMG = public_path() . '/images/products/' . $img;
+                    if (file_exists($pathIMG)) {
+                        if ($img != 'no-image.png') {
+                            @unlink($pathIMG);
+                        }
+                    }
+                }
+            }
+            $filename = 'no-image.png';
+        } else {
+            if ($request['image'] !== null) {
+                foreach (explode(',', $request['image']) as $img) {
+                    $pathIMG = public_path() . '/images/products/' . $img;
+                    if (file_exists($pathIMG)) {
+                        if ($img != 'no-image.png') {
+                            @unlink($pathIMG);
+                        }
+                    }
+                }
+            }
+            $files = $request['images'];
+            foreach ($files as $file) {
+                $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
+                $fileData->resize(200, 200);
+                $name = rand(11111111, 99999999) . $file['name'];
+                $path = public_path() . '/images/products/';
+                $success = file_put_contents($path . $name, $fileData);
+                $images[] = $name;
+            }
+            $filename = implode(",", $images);
+        }
+        
+        $ob = [
+            "en_title" =>  $request['en_title'] ,
+            "ar_title" => $request['ar_title'],
+            "desc" => $request['desc'],
+            "discount" => 0,
+            "slug" => $request['en_title'],
+            "code" =>  $request['code'],
+            "Type_barcode" => $request['Type_barcode'],
+            "price" => $request['price'],
+            "cost" =>  $request['cost'],
+            "category_id" => $request['category_id'],
+            "unit_id" => $request['unit_id'],
+            "brand_id" => $request['brand_id'],
+            "unit_sale_id" => $request['unit_sale_id'],
+            "unit_purchase_id" => $request['unit_purchase_id'],
+            "TaxNet" => $request['TaxNet'] ,
+            "tax_method" => $request['tax_method'],
+            "image" => $filename,
+            "note" => $request['note'],
+            "stock_alert" => $request['stock_alert'],
+            "is_variant" => $request['is_variant'],
+            "is_active" => true,
+            
+        ];
+
+       
+
+         
+
+        $client = new Client(); 
+        $response = $client->request('PUT', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/'.$id , [
+            'json' => $ob
+        ]);
+
+
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return   $data;
+
+
         $this->authorizeForUser($request->user('api'), 'update', Product::class);
         try {
             $this->validate($request, [
@@ -471,6 +720,13 @@ class ProductsController extends BaseController
 
     public function destroy(Request $request, $id)
     {
+
+        $client = new Client(); 
+        $response = $client->request('DELETE', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/'.$id);
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return   $data;
+
         $this->authorizeForUser($request->user('api'), 'delete', Product::class);
 
         \DB::transaction(function () use ($id) {
@@ -553,6 +809,59 @@ class ProductsController extends BaseController
 
     public function Get_Products_Details(Request $request, $id)
     {
+
+
+        $client = new Client();
+        $ProductRespone = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/'.$id);
+        $jsonData = $ProductRespone->getBody();
+        $data = json_decode($jsonData, true);
+        // return $data;
+
+
+        $image = $data['product']['ProductModel']['image'];
+
+
+        
+      
+        if ( $image != '' &&  $image != 'no-image.png') {
+           $iamages =  explode(',',  $image);
+        } else {
+            $iamages = ['no-image.png'];
+        }
+
+
+        $product = [
+            "code" =>  $data['product']['ProductModel']['code'],
+            "en_title" =>  $data['product']['ProductModel']['en_title']  ,
+            "ar_title" => $data['product']['ProductModel']['ar_title'],
+            "category" => $data['product']['CategoryModel']['ar_title'],
+            "brand" => $data['product']['BrandModel']['ar_title'],
+            "cost" =>  floatval($data['product']['ProductModel']['cost'] ) ,
+            "price" => floatval($data['product']['ProductModel']['price']),
+            "unit" => $data['product']['UnitModel']['ar_title'],
+            "taxe" => $data['product']['ProductModel']['TaxNet'] ,
+            "tax_method" => $data['product']['ProductModel']['tax_method'],
+            "stock_alert" => $data['product']['ProductModel']['stock_alert'],
+            "is_variant" => false,
+            "images" => $iamages,
+            "stock" => $data['stock']['qty'],
+            "desc" => $data['product']['ProductModel']['desc'],
+            "discount" => 0,
+            "slug" => $data['product']['ProductModel']['en_title'],
+            "Type_barcode" => $data['product']['ProductModel']['Type_barcode'],
+            "unit_sale_id" => $data['product']['UnitModel']['id'],
+            "unit_purchase_id" => $data['product']['UnitModel']['id'],
+            "note" => $data['product']['ProductModel']['note'],
+
+            
+        ];
+
+        return response()->json([
+            'product' => $product
+    
+            // 'units_sub' => $product_units,
+        ]);
+        
 
         $this->authorizeForUser($request->user('api'), 'view', Product::class);
 
@@ -701,6 +1010,18 @@ class ProductsController extends BaseController
     public function show($id)
     {
 
+
+
+        $client = new Client();
+        $ProductRespone = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/'.$id);
+        $jsonData = $ProductRespone->getBody();
+        $data = json_decode($jsonData, true);
+        return $data;
+     
+
+   
+
+
         $Product_data = Product::with('unit')
             ->where('id', $id)
             ->where('deleted_at', '=', null)
@@ -830,6 +1151,36 @@ class ProductsController extends BaseController
     public function create(Request $request)
     {
 
+        $client = new Client();
+
+
+
+        $client = new Client(); 
+        $unitRsponse = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/units/pagentation?skip=0&limit=10000');
+        $jsonDataUnits = $unitRsponse->getBody();
+        $units = json_decode($jsonDataUnits, true);
+
+
+
+
+        $categoryResponse = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/categorys/pagenation?skip=0&limit=500');
+        $jsonDataCategory = $categoryResponse->getBody();
+        $category = json_decode($jsonDataCategory, true);
+
+
+
+        $BrandResponse = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/brands/pagentation?skip=0&limit=500');
+        $jsonDataBrand = $BrandResponse->getBody();
+        $brand = json_decode($jsonDataBrand, true);
+        // return   $data;
+
+      
+        return response()->json([
+            'categories' => $category['items'],
+            'brands' => $brand['items'],
+            'units' => $units['items'],
+        ]);
+
         $this->authorizeForUser($request->user('api'), 'create', Product::class);
 
         $categories = Category::where('deleted_at', null)->get(['id', 'name']);
@@ -838,7 +1189,7 @@ class ProductsController extends BaseController
         return response()->json([
             'categories' => $categories,
             'brands' => $brands,
-            'units' => $units,
+            'units' => $units['items'],
         ]);
 
     }
@@ -858,6 +1209,113 @@ class ProductsController extends BaseController
 
     public function edit(Request $request, $id)
     {
+        $client = new Client();
+        $ProductRespone = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/products/'.$id);
+        $jsonData = $ProductRespone->getBody();
+        $data = json_decode($jsonData, true);
+   
+
+   
+
+
+
+    
+        $unitRsponse = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/units/pagentation?skip=0&limit=10000');
+        $jsonDataUnits = $unitRsponse->getBody();
+        $units = json_decode($jsonDataUnits, true);
+
+
+
+
+        $categoryResponse = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/categorys/pagenation?skip=0&limit=500');
+        $jsonDataCategory = $categoryResponse->getBody();
+        $category = json_decode($jsonDataCategory, true);
+
+
+
+        $BrandResponse = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/brands/pagentation?skip=0&limit=500');
+        $jsonDataBrand = $BrandResponse->getBody();
+        $brand = json_decode($jsonDataBrand, true);
+        
+
+        $image = $data['product']['ProductModel']['image'];
+
+
+        
+        $item['images'] = [];
+        if ( $image != '' &&  $image != 'no-image.png') {
+            foreach (explode(',',  $image) as $img) {
+                
+                $path = public_path() . '/images/products/'.$img;
+                if (file_exists($path)) {
+                    $itemImg['name'] = $img;
+                    $type = pathinfo($path, PATHINFO_EXTENSION);
+                    $dataa = file_get_contents($path);
+                    $itemImg['path'] = 'data:image/' . $type . ';base64,' . base64_encode($dataa);
+
+                    $item['images'][] = $itemImg;
+
+                }
+            }
+        } else {
+            $item['images'] = [];
+        }
+        
+        
+     
+        // return $data['product']['ProductModel']['ar_title'];
+        $product = [
+            "en_title" =>  $data['product']['ProductModel']['en_title']  ,
+            "ar_title" => $data['product']['ProductModel']['ar_title'],
+            "desc" => $data['product']['ProductModel']['desc'],
+            "discount" => 0,
+            "slug" => $data['product']['ProductModel']['en_title'],
+            "code" =>  $data['product']['ProductModel']['code'],
+            "Type_barcode" => $data['product']['ProductModel']['Type_barcode'],
+            "price" => $data['product']['ProductModel']['price'],
+            "cost" =>  $data['product']['ProductModel']['cost'],
+            "category_id" => $data['product']['CategoryModel']['id'],
+            "unit_id" => $data['product']['UnitModel']['id'],
+            "brand_id" => $data['product']['BrandModel']['id'],
+            "unit_sale_id" => $data['product']['UnitModel']['id'],
+            "unit_purchase_id" => $data['product']['UnitModel']['id'],
+            "TaxNet" => $data['product']['ProductModel']['TaxNet'] ,
+            "tax_method" => $data['product']['ProductModel']['tax_method'],
+            "image" =>  $item['images'],
+            "note" => $data['product']['ProductModel']['note'],
+            "stock_alert" => $data['product']['ProductModel']['stock_alert'],
+            "is_variant" => $data['product']['ProductModel']['is_variant'],
+            "is_active" => true,
+            
+        ];
+
+
+        // if ($data['product']['ProductModel']['is_variant']) {
+        //     $item['is_variant'] = true;
+        //     $productsVariants = ProductVariant::where('product_id', $id)
+        //         ->where('deleted_at', null)
+        //         ->get();
+        //     foreach ($productsVariants as $variant) {
+        //         $variant_item['id'] = $variant->id;
+        //         $variant_item['text'] = $variant->name;
+        //         $variant_item['qty'] = $variant->qty;
+        //         $variant_item['product_id'] = $variant->product_id;
+        //         $item['ProductVariant'][] = $variant_item;
+        //     }
+        // } else {
+        //     $item['is_variant'] = false;
+        //     $item['ProductVariant'] = [];
+        // }
+
+       
+
+        return response()->json([
+            'product' => $product,
+            'categories' => $category['items'],
+            'brands' => $brand['items'],
+            'units' =>  $units['items'],
+            // 'units_sub' => $product_units,
+        ]);
 
         $this->authorizeForUser($request->user('api'), 'update', Product::class);
 

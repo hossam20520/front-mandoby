@@ -998,6 +998,47 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -1023,22 +1064,27 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       roles: {},
       variants: [],
       product: {
-        name: "",
+        id: 0,
+        en_title: "",
+        ar_title: "",
         code: "",
         Type_barcode: "",
         cost: "",
         price: "",
         brand_id: "",
         category_id: "",
-        TaxNet: "",
+        TaxNet: "0",
         tax_method: "1",
         unit_id: "",
         unit_sale_id: "",
         unit_purchase_id: "",
-        stock_alert: "",
+        stock_alert: "0",
         image: "",
+        desc: "",
         note: "",
-        is_variant: false
+        is_variant: false,
+        discound: 0,
+        slug: ''
       },
       code_exist: ""
     };
@@ -1099,14 +1145,19 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
       var id = this.$route.params.id;
       axios.get("Products/".concat(id, "/edit")).then(function (response) {
-        _this2.product = response.data.product;
-        _this2.variants = response.data.product.ProductVariant;
-        _this2.images = response.data.product.images;
+        // console.log(response.data)
+        // return true
+        _this2.product.id = response.data.product.id;
+        _this2.product = response.data.product; // this.variants = response.data.product.ProductVariant;
+        // console.log( response.data.brands )
+
+        _this2.images = response.data.product.image;
+        console.log(_this2.images);
         _this2.categories = response.data.categories;
         _this2.brands = response.data.brands;
-        _this2.units = response.data.units;
-        _this2.units_sub = response.data.units_sub;
-        _this2.Subcategories = response.data.Subcategories;
+        _this2.units = response.data.units; // this.units_sub = response.data.units;
+        // this.Subcategories = response.data.Subcategories;
+
         _this2.isLoading = false;
       })["catch"](function (response) {
         setTimeout(function () {
@@ -1178,8 +1229,14 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
 
       self.data.append("_method", "put"); //send Data with axios
+      // console.log(this.product.ar_title)
 
-      axios.post("Products/" + this.product.id, self.data).then(function (response) {
+      var id = this.$route.params.id; // console.log(this.product.id)
+
+      axios.post("Products/" + id, self.data).then(function (response) {
+        // console.log(response.data)
+        //  return true
+        // return true
         nprogress__WEBPACK_IMPORTED_MODULE_2___default.a.done();
         self.SubmitProcessing = false;
 
@@ -3038,7 +3095,7 @@ var render = function () {
                                         [
                                           _c("validation-provider", {
                                             attrs: {
-                                              name: "name",
+                                              name: "en_title",
                                               rules: {
                                                 required: true,
                                                 min: 3,
@@ -3059,7 +3116,7 @@ var render = function () {
                                                           attrs: {
                                                             label:
                                                               _vm.$t(
-                                                                "Name_product"
+                                                                "en_title"
                                                               ),
                                                           },
                                                         },
@@ -3071,27 +3128,27 @@ var render = function () {
                                                                   validationContext
                                                                 ),
                                                               "aria-describedby":
-                                                                "name-feedback",
-                                                              label: "name",
+                                                                "Name-feedback",
+                                                              label: "en_title",
                                                               placeholder:
                                                                 _vm.$t(
-                                                                  "Enter_Name_Product"
+                                                                  "Enter_en_title_Product"
                                                                 ),
                                                             },
                                                             model: {
                                                               value:
                                                                 _vm.product
-                                                                  .name,
+                                                                  .en_title,
                                                               callback:
                                                                 function ($$v) {
                                                                   _vm.$set(
                                                                     _vm.product,
-                                                                    "name",
+                                                                    "en_title",
                                                                     $$v
                                                                   )
                                                                 },
                                                               expression:
-                                                                "product.name",
+                                                                "product.en_title",
                                                             },
                                                           }),
                                                           _vm._v(" "),
@@ -3099,7 +3156,7 @@ var render = function () {
                                                             "b-form-invalid-feedback",
                                                             {
                                                               attrs: {
-                                                                id: "name-feedback",
+                                                                id: "Name-feedback",
                                                               },
                                                             },
                                                             [
@@ -3120,7 +3177,105 @@ var render = function () {
                                               ],
                                               null,
                                               false,
-                                              2669341686
+                                              1265776418
+                                            ),
+                                          }),
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "b-col",
+                                        {
+                                          staticClass: "mb-2",
+                                          attrs: { md: "6" },
+                                        },
+                                        [
+                                          _c("validation-provider", {
+                                            attrs: {
+                                              name: "ar_title",
+                                              rules: {
+                                                required: true,
+                                                min: 3,
+                                                max: 55,
+                                              },
+                                            },
+                                            scopedSlots: _vm._u(
+                                              [
+                                                {
+                                                  key: "default",
+                                                  fn: function (
+                                                    validationContext
+                                                  ) {
+                                                    return [
+                                                      _c(
+                                                        "b-form-group",
+                                                        {
+                                                          attrs: {
+                                                            label:
+                                                              _vm.$t(
+                                                                "ar_title"
+                                                              ),
+                                                          },
+                                                        },
+                                                        [
+                                                          _c("b-form-input", {
+                                                            attrs: {
+                                                              state:
+                                                                _vm.getValidationState(
+                                                                  validationContext
+                                                                ),
+                                                              "aria-describedby":
+                                                                "Name-feedback",
+                                                              label: "ar_title",
+                                                              placeholder:
+                                                                _vm.$t(
+                                                                  "Enter_ar_title_Product"
+                                                                ),
+                                                            },
+                                                            model: {
+                                                              value:
+                                                                _vm.product
+                                                                  .ar_title,
+                                                              callback:
+                                                                function ($$v) {
+                                                                  _vm.$set(
+                                                                    _vm.product,
+                                                                    "ar_title",
+                                                                    $$v
+                                                                  )
+                                                                },
+                                                              expression:
+                                                                "product.ar_title",
+                                                            },
+                                                          }),
+                                                          _vm._v(" "),
+                                                          _c(
+                                                            "b-form-invalid-feedback",
+                                                            {
+                                                              attrs: {
+                                                                id: "Name-feedback",
+                                                              },
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  validationContext
+                                                                    .errors[0]
+                                                                )
+                                                              ),
+                                                            ]
+                                                          ),
+                                                        ],
+                                                        1
+                                                      ),
+                                                    ]
+                                                  },
+                                                },
+                                              ],
+                                              null,
+                                              false,
+                                              1471698210
                                             ),
                                           }),
                                         ],
@@ -3143,142 +3298,120 @@ var render = function () {
                                               [
                                                 {
                                                   key: "default",
-                                                  fn: function (
-                                                    validationContext
-                                                  ) {
-                                                    return [
-                                                      _c(
-                                                        "b-form-group",
-                                                        {
-                                                          attrs: {
-                                                            label:
-                                                              _vm.$t(
-                                                                "CodeProduct"
-                                                              ),
-                                                          },
-                                                        },
-                                                        [
-                                                          _c(
-                                                            "div",
-                                                            {
-                                                              staticClass:
-                                                                "input-group",
-                                                            },
-                                                            [
-                                                              _c("input", {
-                                                                directives: [
-                                                                  {
-                                                                    name: "model",
-                                                                    rawName:
-                                                                      "v-model",
-                                                                    value:
-                                                                      _vm
-                                                                        .product
-                                                                        .code,
-                                                                    expression:
-                                                                      "product.code",
-                                                                  },
-                                                                ],
-                                                                staticClass:
-                                                                  "form-control",
-                                                                attrs: {
-                                                                  state:
-                                                                    _vm.getValidationState(
-                                                                      validationContext
-                                                                    ),
-                                                                  "aria-describedby":
-                                                                    "CodeProduct-feedback",
-                                                                  type: "text",
-                                                                },
-                                                                domProps: {
-                                                                  value:
-                                                                    _vm.product
-                                                                      .code,
-                                                                },
-                                                                on: {
-                                                                  input:
-                                                                    function (
-                                                                      $event
-                                                                    ) {
-                                                                      if (
-                                                                        $event
-                                                                          .target
-                                                                          .composing
-                                                                      ) {
-                                                                        return
-                                                                      }
-                                                                      _vm.$set(
-                                                                        _vm.product,
-                                                                        "code",
-                                                                        $event
-                                                                          .target
-                                                                          .value
-                                                                      )
-                                                                    },
-                                                                },
-                                                              }),
-                                                              _vm._v(" "),
-                                                              _c(
-                                                                "b-form-invalid-feedback",
-                                                                {
-                                                                  attrs: {
-                                                                    id: "CodeProduct-feedback",
-                                                                  },
-                                                                },
-                                                                [
-                                                                  _vm._v(
-                                                                    _vm._s(
-                                                                      validationContext
-                                                                        .errors[0]
-                                                                    )
-                                                                  ),
-                                                                ]
-                                                              ),
-                                                            ],
-                                                            1
-                                                          ),
-                                                          _vm._v(" "),
-                                                          _c("span", [
-                                                            _vm._v(
-                                                              _vm._s(
-                                                                _vm.$t(
-                                                                  "Scan_your_barcode_and_select_the_correct_symbology_below"
-                                                                )
-                                                              )
+                                                  fn: function (ref) {
+                                                    var valid = ref.valid
+                                                    var errors = ref.errors
+                                                    return _c(
+                                                      "b-form-group",
+                                                      {
+                                                        attrs: {
+                                                          label:
+                                                            _vm.$t(
+                                                              "CodeProduct"
                                                             ),
-                                                          ]),
-                                                          _vm._v(" "),
-                                                          _vm.code_exist != ""
-                                                            ? _c(
-                                                                "b-alert",
-                                                                {
-                                                                  staticClass:
-                                                                    "error mt-1",
-                                                                  attrs: {
-                                                                    show: "",
-                                                                    variant:
-                                                                      "danger",
-                                                                  },
-                                                                },
-                                                                [
-                                                                  _vm._v(
-                                                                    _vm._s(
-                                                                      _vm.code_exist
+                                                        },
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "div",
+                                                          {
+                                                            staticClass:
+                                                              "input-group",
+                                                          },
+                                                          [
+                                                            _c("b-form-input", {
+                                                              class: {
+                                                                "is-invalid":
+                                                                  !!errors.length,
+                                                              },
+                                                              attrs: {
+                                                                state: errors[0]
+                                                                  ? false
+                                                                  : valid
+                                                                  ? true
+                                                                  : null,
+                                                                "aria-describedby":
+                                                                  "CodeProduct-feedback",
+                                                                type: "text",
+                                                              },
+                                                              model: {
+                                                                value:
+                                                                  _vm.product
+                                                                    .code,
+                                                                callback:
+                                                                  function (
+                                                                    $$v
+                                                                  ) {
+                                                                    _vm.$set(
+                                                                      _vm.product,
+                                                                      "code",
+                                                                      $$v
                                                                     )
-                                                                  ),
-                                                                ]
+                                                                  },
+                                                                expression:
+                                                                  "product.code",
+                                                              },
+                                                            }),
+                                                            _vm._v(" "),
+                                                            _c(
+                                                              "b-form-invalid-feedback",
+                                                              {
+                                                                attrs: {
+                                                                  id: "CodeProduct-feedback",
+                                                                },
+                                                              },
+                                                              [
+                                                                _vm._v(
+                                                                  _vm._s(
+                                                                    errors[0]
+                                                                  )
+                                                                ),
+                                                              ]
+                                                            ),
+                                                          ],
+                                                          1
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c("span", [
+                                                          _vm._v(
+                                                            _vm._s(
+                                                              _vm.$t(
+                                                                "Scan_your_barcode_and_select_the_correct_symbology_below"
                                                               )
-                                                            : _vm._e(),
-                                                        ],
-                                                        1
-                                                      ),
-                                                    ]
+                                                            )
+                                                          ),
+                                                        ]),
+                                                        _vm._v(" "),
+                                                        _vm.code_exist != ""
+                                                          ? _c(
+                                                              "b-alert",
+                                                              {
+                                                                staticClass:
+                                                                  "error mt-1",
+                                                                attrs: {
+                                                                  show: "",
+                                                                  variant:
+                                                                    "danger",
+                                                                },
+                                                              },
+                                                              [
+                                                                _vm._v(
+                                                                  _vm._s(
+                                                                    _vm.code_exist
+                                                                  )
+                                                                ),
+                                                              ]
+                                                            )
+                                                          : _vm._e(),
+                                                      ],
+                                                      1
+                                                    )
                                                   },
                                                 },
                                               ],
                                               null,
                                               false,
-                                              1408029394
+                                              1597786490
                                             ),
                                           }),
                                         ],
@@ -3340,7 +3473,7 @@ var render = function () {
                                                                 ) {
                                                                   return {
                                                                     label:
-                                                                      categories.name,
+                                                                      categories.ar_title,
                                                                     value:
                                                                       categories.id,
                                                                   }
@@ -3381,7 +3514,7 @@ var render = function () {
                                               ],
                                               null,
                                               false,
-                                              442498797
+                                              3944723078
                                             ),
                                           }),
                                         ],
@@ -3411,7 +3544,7 @@ var render = function () {
                                                   options: _vm.brands.map(
                                                     function (brands) {
                                                       return {
-                                                        label: brands.name,
+                                                        label: brands.ar_title,
                                                         value: brands.id,
                                                       }
                                                     }
@@ -3547,7 +3680,7 @@ var render = function () {
                                               ],
                                               null,
                                               false,
-                                              4092838316
+                                              2783076652
                                             ),
                                           }),
                                         ],
@@ -3807,7 +3940,7 @@ var render = function () {
                                                                 ) {
                                                                   return {
                                                                     label:
-                                                                      units.name,
+                                                                      units.ar_title,
                                                                     value:
                                                                       units.id,
                                                                   }
@@ -3852,7 +3985,7 @@ var render = function () {
                                               ],
                                               null,
                                               false,
-                                              748547594
+                                              3730778337
                                             ),
                                           }),
                                         ],
@@ -3908,15 +4041,15 @@ var render = function () {
                                                               return label.value
                                                             },
                                                             options:
-                                                              _vm.units_sub.map(
+                                                              _vm.units.map(
                                                                 function (
-                                                                  units_sub
+                                                                  units
                                                                 ) {
                                                                   return {
                                                                     label:
-                                                                      units_sub.name,
+                                                                      units.ar_title,
                                                                     value:
-                                                                      units_sub.id,
+                                                                      units.id,
                                                                   }
                                                                 }
                                                               ),
@@ -3955,7 +4088,7 @@ var render = function () {
                                               ],
                                               null,
                                               false,
-                                              616760917
+                                              1169126334
                                             ),
                                           }),
                                         ],
@@ -4012,15 +4145,15 @@ var render = function () {
                                                               return label.value
                                                             },
                                                             options:
-                                                              _vm.units_sub.map(
+                                                              _vm.units.map(
                                                                 function (
-                                                                  units_sub
+                                                                  units
                                                                 ) {
                                                                   return {
                                                                     label:
-                                                                      units_sub.name,
+                                                                      units.ar_title,
                                                                     value:
-                                                                      units_sub.id,
+                                                                      units.id,
                                                                   }
                                                                 }
                                                               ),
@@ -4059,7 +4192,7 @@ var render = function () {
                                               ],
                                               null,
                                               false,
-                                              3136313157
+                                              2808114862
                                             ),
                                           }),
                                         ],
@@ -4403,9 +4536,60 @@ var render = function () {
                                               ],
                                               null,
                                               false,
-                                              2612488639
+                                              4288890399
                                             ),
                                           }),
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "b-col",
+                                        {
+                                          staticClass: "mb-2",
+                                          attrs: { md: "12" },
+                                        },
+                                        [
+                                          _c(
+                                            "b-form-group",
+                                            {
+                                              attrs: { label: _vm.$t("desc") },
+                                            },
+                                            [
+                                              _c("textarea", {
+                                                directives: [
+                                                  {
+                                                    name: "model",
+                                                    rawName: "v-model",
+                                                    value: _vm.product.desc,
+                                                    expression: "product.desc",
+                                                  },
+                                                ],
+                                                staticClass: "form-control",
+                                                attrs: {
+                                                  rows: "4",
+                                                  placeholder: _vm.$t("desc"),
+                                                },
+                                                domProps: {
+                                                  value: _vm.product.desc,
+                                                },
+                                                on: {
+                                                  input: function ($event) {
+                                                    if (
+                                                      $event.target.composing
+                                                    ) {
+                                                      return
+                                                    }
+                                                    _vm.$set(
+                                                      _vm.product,
+                                                      "desc",
+                                                      $event.target.value
+                                                    )
+                                                  },
+                                                },
+                                              }),
+                                            ]
+                                          ),
                                         ],
                                         1
                                       ),

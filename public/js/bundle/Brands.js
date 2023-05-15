@@ -161,6 +161,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   metaInfo: {
@@ -182,15 +197,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       selectedIds: [],
       totalRows: "",
       search: "",
+      updateImage: false,
       data: new FormData(),
       editmode: false,
       brands: [],
       limit: "10",
       brand: {
         id: "",
-        name: "",
+        en_title: "",
+        ar_title: "",
         description: "",
-        image: ""
+        image: "",
+        currentImage: ""
       }
     };
   },
@@ -202,12 +220,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         tdClass: "text-left",
         thClass: "text-left"
       }, {
-        label: this.$t("BrandName"),
-        field: "name",
+        label: this.$t("ar_title"),
+        field: "ar_title",
         tdClass: "text-left",
         thClass: "text-left"
       }, {
-        label: this.$t("BrandDescription"),
+        label: this.$t("en_title"),
+        field: "en_title",
+        tdClass: "text-left",
+        thClass: "text-left"
+      }, {
+        label: this.$t("desca"),
         field: "description",
         tdClass: "text-left",
         thClass: "text-left"
@@ -326,8 +349,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 valid = _yield$_this3$$refs$I.valid;
 
                 if (valid) {
+                  _this3.updateImage = true;
                   _this3.brand.image = e.target.files[0];
                 } else {
+                  _this3.updateImage = true;
                   _this3.brand.image = "";
                 }
 
@@ -350,6 +375,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.Get_Brands(this.serverParams.page);
       this.reset_Form();
       this.brand = brand;
+      this.brand.currentImage = brand.image;
       this.editmode = true;
       this.$bvModal.show("New_brand");
     },
@@ -380,12 +406,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       var self = this;
       self.SubmitProcessing = true;
-      self.data.append("name", self.brand.name);
+      self.data.append("en_title", self.brand.en_title);
+      self.data.append("ar_title", self.brand.ar_title);
       self.data.append("description", self.brand.description);
       self.data.append("image", self.brand.image);
       axios.post("brands", self.data).then(function (response) {
         self.SubmitProcessing = false;
         Fire.$emit("Event_Brand");
+        _this5.updateImage = false;
 
         _this5.makeToast("success", _this5.$t("Create.TitleBrand"), _this5.$t("Success"));
       })["catch"](function (error) {
@@ -400,13 +428,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       var self = this;
       self.SubmitProcessing = true;
-      self.data.append("name", self.brand.name);
+      self.data.append("en_title", self.brand.en_title);
+      self.data.append("ar_title", self.brand.ar_title);
       self.data.append("description", self.brand.description);
       self.data.append("image", self.brand.image);
+      self.data.append("updateImage", self.updateImage);
+      self.data.append("currentImage", self.brand.currentImage);
       self.data.append("_method", "put");
       axios.post("brands/" + self.brand.id, self.data).then(function (response) {
         self.SubmitProcessing = false;
         Fire.$emit("Event_Brand");
+        _this6.updateImage = false;
 
         _this6.makeToast("success", _this6.$t("Update.TitleBrand"), _this6.$t("Success"));
       })["catch"](function (error) {
@@ -550,14 +582,6 @@ var render = function () {
                     columns: _vm.columns,
                     totalRows: _vm.totalRows,
                     rows: _vm.brands,
-                    "search-options": {
-                      enabled: true,
-                      placeholder: _vm.$t("Search_this_table"),
-                    },
-                    "select-options": {
-                      enabled: true,
-                      clearSelectionText: "",
-                    },
                     "pagination-options": {
                       enabled: true,
                       mode: "records",
@@ -570,8 +594,6 @@ var render = function () {
                     "on-page-change": _vm.onPageChange,
                     "on-per-page-change": _vm.onPerPageChange,
                     "on-sort-change": _vm.onSortChange,
-                    "on-search": _vm.onSearch,
-                    "on-selected-rows-change": _vm.selectionChanged,
                   },
                   scopedSlots: _vm._u(
                     [
@@ -766,25 +788,96 @@ var render = function () {
                                   return [
                                     _c(
                                       "b-form-group",
-                                      { attrs: { label: _vm.$t("BrandName") } },
+                                      { attrs: { label: _vm.$t("en_title") } },
                                       [
                                         _c("b-form-input", {
                                           attrs: {
-                                            placeholder:
-                                              _vm.$t("Enter_Name_Brand"),
+                                            placeholder: _vm.$t(
+                                              "Enter_en_Name_Brand"
+                                            ),
                                             state:
                                               _vm.getValidationState(
                                                 validationContext
                                               ),
                                             "aria-describedby": "Name-feedback",
-                                            label: "Name",
+                                            label: "en_title",
                                           },
                                           model: {
-                                            value: _vm.brand.name,
+                                            value: _vm.brand.en_title,
                                             callback: function ($$v) {
-                                              _vm.$set(_vm.brand, "name", $$v)
+                                              _vm.$set(
+                                                _vm.brand,
+                                                "en_title",
+                                                $$v
+                                              )
                                             },
-                                            expression: "brand.name",
+                                            expression: "brand.en_title",
+                                          },
+                                        }),
+                                        _vm._v(" "),
+                                        _c(
+                                          "b-form-invalid-feedback",
+                                          { attrs: { id: "Name-feedback" } },
+                                          [
+                                            _vm._v(
+                                              _vm._s(
+                                                validationContext.errors[0]
+                                              )
+                                            ),
+                                          ]
+                                        ),
+                                      ],
+                                      1
+                                    ),
+                                  ]
+                                },
+                              },
+                            ]),
+                          }),
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        { attrs: { md: "12" } },
+                        [
+                          _c("validation-provider", {
+                            attrs: {
+                              name: "ar Brand Name",
+                              rules: { required: true, min: 3, max: 20 },
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "default",
+                                fn: function (validationContext) {
+                                  return [
+                                    _c(
+                                      "b-form-group",
+                                      { attrs: { label: _vm.$t("BrandName") } },
+                                      [
+                                        _c("b-form-input", {
+                                          attrs: {
+                                            placeholder: _vm.$t(
+                                              "Enter_ar_Name_Brand"
+                                            ),
+                                            state:
+                                              _vm.getValidationState(
+                                                validationContext
+                                              ),
+                                            "aria-describedby": "Name-feedback",
+                                            label: "ar_title",
+                                          },
+                                          model: {
+                                            value: _vm.brand.ar_title,
+                                            callback: function ($$v) {
+                                              _vm.$set(
+                                                _vm.brand,
+                                                "ar_title",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "brand.ar_title",
                                           },
                                         }),
                                         _vm._v(" "),

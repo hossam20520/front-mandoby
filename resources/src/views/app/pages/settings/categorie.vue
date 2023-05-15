@@ -12,15 +12,7 @@
         @on-page-change="onPageChange"
         @on-per-page-change="onPerPageChange"
         @on-sort-change="onSortChange"
-        @on-search="onSearch"
-        :search-options="{
-        enabled: true,
-        placeholder: $t('Search_this_table'),  
-      }"
-        :select-options="{ 
-          enabled: true ,
-          clearSelectionText: '',
-        }"
+ 
         @on-selected-rows-change="selectionChanged"
         :pagination-options="{
         enabled: true,
@@ -53,13 +45,24 @@
               <i class="i-Close-Window text-25 text-danger"></i>
             </a>
           </span>
+
+          <span v-else-if="props.column.field == 'image'">
+            <b-img
+              thumbnail
+              height="50"
+              width="50"
+              fluid
+              :src="'/images/category/' + props.row.image"
+              alt="image"
+            ></b-img>
+          </span>
         </template>
       </vue-good-table>
     </b-card>
 
     <validation-observer ref="Create_Category">
       <b-modal hide-footer size="md" id="New_Category" :title="editmode?$t('Edit'):$t('Add')">
-        <b-form @submit.prevent="Submit_Category">
+        <b-form @submit.prevent="Submit_Category" enctype="multipart/form-data">
           <b-row>
             <!-- Code category -->
             <b-col md="12">
@@ -88,15 +91,51 @@
                 :rules="{ required: true}"
                 v-slot="validationContext"
               >
-                <b-form-group :label="$t('Namecategorie')">
+                <b-form-group :label="$t('en_title')">
                   <b-form-input
-                    :placeholder="$t('Enter_name_category')"
+                    :placeholder="$t('Enter_ar__name_category')"
                     :state="getValidationState(validationContext)"
                     aria-describedby="Name-feedback"
-                    label="Name"
-                    v-model="category.name"
+                    label="en_title"
+                    v-model="category.en_title"
                   ></b-form-input>
                   <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+
+          <!-- ar_title category -->
+            <b-col md="12">
+              <validation-provider
+                name="ar Name category"
+                :rules="{ required: true}"
+                v-slot="validationContext"
+              >
+                <b-form-group :label="$t('en_title')">
+                  <b-form-input
+                    :placeholder="$t('Enter_en_name_category')"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="Name-feedback"
+                    label="ar_title"
+                    v-model="category.ar_title"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+
+
+            <b-col md="12">
+              <validation-provider name="Image" ref="Image" rules="mimes:image/*|size:200">
+                <b-form-group slot-scope="{validate, valid, errors }" :label="$t('CategoryImage')">
+                  <input
+                    :state="errors[0] ? false : (valid ? true : null)"
+                    :class="{'is-invalid': !!errors.length}"
+                    @change="onFileSelected"
+                    label="Choose Image"
+                    type="file"
+                  >
+                  <b-form-invalid-feedback id="Image-feedback">{{ errors[0] }}</b-form-invalid-feedback>
                 </b-form-group>
               </validation-provider>
             </b-col>
@@ -140,19 +179,32 @@ export default {
       totalRows: "",
       search: "",
       limit: "10",
+      updateImage:false,
+      data: new FormData(),
       categories: [],
       editmode: false,
 
       category: {
         id: "",
-        name: "",
-        code: ""
+        ar_title: "",
+        en_title: "",
+        image: "",
+        code: "",
+        currentImage:"",
       }
     };
   },
   computed: {
     columns() {
       return [
+
+      {
+          label: this.$t("image"),
+          field: "image",
+          tdClass: "text-left",
+          thClass: "text-left",
+          html: true,
+        },
         {
           label: this.$t("Codecategorie"),
           field: "code",
@@ -160,8 +212,15 @@ export default {
           thClass: "text-left"
         },
         {
-          label: this.$t("Namecategorie"),
-          field: "name",
+          label: this.$t("ar_title"),
+          field: "ar_title",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+
+        {
+          label: this.$t("en_title"),
+          field: "en_title",
           tdClass: "text-left",
           thClass: "text-left"
         },
@@ -181,6 +240,21 @@ export default {
     //---- update Params Table
     updateParams(newProps) {
       this.serverParams = Object.assign({}, this.serverParams, newProps);
+    },
+
+
+        //------------------------------ Event Upload Image -------------------------------\\
+        async onFileSelected(e) {
+      const { valid } = await this.$refs.Image.validate(e);
+
+      if (valid) {
+        this.updateImage = true;
+        this.category.image = e.target.files[0];
+        
+      } else {
+        this.category.image = "";
+        this.updateImage = true;
+      }
     },
 
     //---- Event Page Change
@@ -272,6 +346,7 @@ export default {
       this.Get_Categories(this.serverParams.page);
       this.reset_Form();
       this.category = category;
+      this.category.currentImage = category.image;
       this.editmode = true;
       this.$bvModal.show("New_Category");
     },
@@ -282,8 +357,7 @@ export default {
       // Start the progress bar.
       NProgress.start();
       NProgress.set(0.1);
-      axios
-        .get(
+      axios.get(
           "categories?page=" +
             page +
             "&SortField=" +
@@ -296,6 +370,7 @@ export default {
             this.limit
         )
         .then(response => {
+       
           this.categories = response.data.categories;
           this.totalRows = response.data.totalRows;
 
@@ -314,13 +389,17 @@ export default {
 
     //----------------------------------Create new Category ----------------\\
     Create_Category() {
-      this.SubmitProcessing = true;
-      axios
-        .post("categories", {
-          name: this.category.name,
-          code: this.category.code
-        })
+      var self = this;
+      self.SubmitProcessing = true;
+      self.data.append("en_title", self.category.en_title);
+      self.data.append("ar_title", self.category.ar_title);
+      self.data.append("code", self.category.code);
+      self.data.append("image", self.category.image);
+
+      axios.post("categories",  self.data)
         .then(response => {
+         
+          this.updateImage = false;
           this.SubmitProcessing = false;
           Fire.$emit("Event_Category");
           this.makeToast(
@@ -337,14 +416,25 @@ export default {
 
     //---------------------------------- Update Category ----------------\\
     Update_Category() {
-      this.SubmitProcessing = true;
-      axios
-        .put("categories/" + this.category.id, {
-          name: this.category.name,
-          code: this.category.code
-        })
+      var self = this;
+      self.SubmitProcessing = true;
+      self.data.append("en_title", self.category.en_title);
+      self.data.append("ar_title", self.category.ar_title);
+      self.data.append("code", self.category.code);
+      self.data.append("image", self.category.image);
+      self.data.append("updateImage", self.updateImage);
+      self.data.append("currentImage", self.category.currentImage);
+      
+      self.data.append("_method", "put");
+      // for (var key of self.data.entries()){
+      //   console.log(key[0] + ', '+key[1])
+      // }
+      
+      axios.post("categories/" + this.category.id, self.data)
         .then(response => {
+        
           this.SubmitProcessing = false;
+          this.updateImage = false;
           Fire.$emit("Event_Category");
           this.makeToast(
             "success",
@@ -363,7 +453,9 @@ export default {
     reset_Form() {
       this.category = {
         id: "",
-        name: "",
+        ar_title: "",
+        en_title: "",
+        image: "",
         code: ""
       };
     },

@@ -121,8 +121,8 @@ export default {
       NProgress.set(0.1);
       self.loading = true;
       axios
-        .post("http://gatway_service:8000/api/v1.0/gateways/client/login",{
-          username: self.email,
+        .post("/login",{
+          email: self.email,
           password: self.password
         },
         {

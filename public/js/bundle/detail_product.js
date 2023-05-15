@@ -394,6 +394,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -446,7 +460,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var id = this.$route.params.id;
       axios.get("Products/Detail/".concat(id)).then(function (response) {
-        _this.product = response.data;
+        _this.product = response.data.product;
+        console.log(_this.product);
         _this.isLoading = false;
       })["catch"](function (response) {
         setTimeout(function () {
@@ -938,11 +953,19 @@ var render = function () {
                               ]),
                               _vm._v(" "),
                               _c("tr", [
-                                _c("td", [
-                                  _vm._v(_vm._s(_vm.$t("ProductName"))),
-                                ]),
+                                _c("td", [_vm._v(_vm._s(_vm.$t("en_title")))]),
                                 _vm._v(" "),
-                                _c("th", [_vm._v(_vm._s(_vm.product.name))]),
+                                _c("th", [
+                                  _vm._v(_vm._s(_vm.product.en_title)),
+                                ]),
+                              ]),
+                              _vm._v(" "),
+                              _c("tr", [
+                                _c("td", [_vm._v(_vm._s(_vm.$t("ar_title")))]),
+                                _vm._v(" "),
+                                _c("th", [
+                                  _vm._v(_vm._s(_vm.product.ar_title)),
+                                ]),
                               ]),
                               _vm._v(" "),
                               _c("tr", [
@@ -1049,18 +1072,7 @@ var render = function () {
                                       _vm._v(_vm._s(_vm.$t("ProductVariant"))),
                                     ]),
                                     _vm._v(" "),
-                                    _c(
-                                      "th",
-                                      _vm._l(
-                                        _vm.product.ProductVariant,
-                                        function (variant) {
-                                          return _c("span", [
-                                            _vm._v(_vm._s(variant) + ","),
-                                          ])
-                                        }
-                                      ),
-                                      0
-                                    ),
+                                    _c("th"),
                                   ])
                                 : _vm._e(),
                             ]),
@@ -1124,85 +1136,24 @@ var render = function () {
                               ]),
                             ]),
                             _vm._v(" "),
-                            _c(
-                              "tbody",
-                              _vm._l(_vm.product.CountQTY, function (PROD_W) {
-                                return _c("tr", [
-                                  _c("td", [_vm._v(_vm._s(PROD_W.mag))]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _vm._v(
-                                      _vm._s(_vm.formatNumber(PROD_W.qte, 2)) +
-                                        " " +
-                                        _vm._s(_vm.product.unit)
-                                    ),
-                                  ]),
-                                ])
-                              }),
-                              0
-                            ),
+                            _c("tbody", [
+                              _c("tr", [
+                                _c("td", [_vm._v("المخزن الرئيسي")]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      _vm.formatNumber(_vm.product.stock, 2)
+                                    ) +
+                                      " " +
+                                      _vm._s(_vm.product.unit)
+                                  ),
+                                ]),
+                              ]),
+                            ]),
                           ]
                         ),
                       ]),
-                      _vm._v(" "),
-                      _vm.product.is_variant == "yes"
-                        ? _c(
-                            "b-col",
-                            { staticClass: "mt-4", attrs: { md: "7" } },
-                            [
-                              _c(
-                                "table",
-                                { staticClass: "table table-hover table-sm" },
-                                [
-                                  _c("thead", [
-                                    _c("tr", [
-                                      _c("th", [
-                                        _vm._v(_vm._s(_vm.$t("warehouse"))),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("th", [
-                                        _vm._v(_vm._s(_vm.$t("Variant"))),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("th", [
-                                        _vm._v(_vm._s(_vm.$t("Quantity"))),
-                                      ]),
-                                    ]),
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "tbody",
-                                    _vm._l(
-                                      _vm.product.CountQTY_variants,
-                                      function (PROD_V) {
-                                        return _c("tr", [
-                                          _c("td", [
-                                            _vm._v(_vm._s(PROD_V.mag)),
-                                          ]),
-                                          _vm._v(" "),
-                                          _c("td", [
-                                            _vm._v(_vm._s(PROD_V.variant)),
-                                          ]),
-                                          _vm._v(" "),
-                                          _c("td", [
-                                            _vm._v(
-                                              _vm._s(
-                                                _vm.formatNumber(PROD_V.qte, 2)
-                                              ) +
-                                                " " +
-                                                _vm._s(_vm.product.unit)
-                                            ),
-                                          ]),
-                                        ])
-                                      }
-                                    ),
-                                    0
-                                  ),
-                                ]
-                              ),
-                            ]
-                          )
-                        : _vm._e(),
                     ],
                     1
                   ),

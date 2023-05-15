@@ -1030,13 +1030,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -1053,7 +1046,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           type: "desc"
         },
         page: 1,
-        perPage: 10
+        skip: 0,
+        perPage: 3
       },
       selectedIds: [],
       ImportProcessing: false,
@@ -1084,8 +1078,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         tdClass: "text-left",
         thClass: "text-left"
       }, {
-        label: this.$t("Name_product"),
-        field: "name",
+        label: this.$t("ar_title"),
+        field: "ar_title",
+        tdClass: "text-left",
+        thClass: "text-left"
+      }, {
+        label: this.$t("en_title"),
+        field: "en_title",
         tdClass: "text-left",
         thClass: "text-left"
       }, {
@@ -1112,12 +1111,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }, {
         label: this.$t("Unit"),
         field: "unit",
-        tdClass: "text-left",
-        thClass: "text-left"
-      }, {
-        label: this.$t("Quantity"),
-        field: "quantity",
-        type: "decimal",
         tdClass: "text-left",
         thClass: "text-left"
       }, {
@@ -1331,10 +1324,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this3 = this;
 
       // Start the progress bar.
+      var pagen = this.skip = (this.page - 1) * this.limit;
       nprogress__WEBPACK_IMPORTED_MODULE_1___default.a.start();
       nprogress__WEBPACK_IMPORTED_MODULE_1___default.a.set(0.1);
       this.setToStrings();
-      axios.get("Products?page=" + page + "&code=" + this.Filter_code + "&name=" + this.Filter_name + "&category_id=" + this.Filter_category + "&brand_id=" + this.Filter_brand + "&SortField=" + this.serverParams.sort.field + "&SortType=" + this.serverParams.sort.type + "&search=" + this.search + "&limit=" + this.limit).then(function (response) {
+      axios.get("Products?page=" + pagen + "&code=" + this.Filter_code + "&name=" + this.Filter_name + "&category_id=" + this.Filter_category + "&brand_id=" + this.Filter_brand + "&SortField=" + this.serverParams.sort.field + "&SortType=" + this.serverParams.sort.type + "&search=" + this.search + "&limit=" + this.limit).then(function (response) {
+        console.log(response.data.products);
         _this3.products = response.data.products;
         _this3.warehouses = response.data.warehouses;
         _this3.categories = response.data.categories;
@@ -2389,14 +2384,6 @@ var render = function () {
                     columns: _vm.columns,
                     totalRows: _vm.totalRows,
                     rows: _vm.products,
-                    "select-options": {
-                      enabled: true,
-                      clearSelectionText: "",
-                    },
-                    "search-options": {
-                      enabled: true,
-                      placeholder: _vm.$t("Search_this_table"),
-                    },
                     "pagination-options": {
                       enabled: true,
                       mode: "records",
@@ -2409,7 +2396,6 @@ var render = function () {
                     "on-page-change": _vm.onPageChange,
                     "on-per-page-change": _vm.onPerPageChange,
                     "on-sort-change": _vm.onSortChange,
-                    "on-search": _vm.onSearch,
                     "on-selected-rows-change": _vm.selectionChanged,
                   },
                   scopedSlots: _vm._u([
@@ -2572,83 +2558,6 @@ var render = function () {
                       slot: "table-actions",
                     },
                     [
-                      _c(
-                        "b-button",
-                        {
-                          directives: [
-                            {
-                              name: "b-toggle",
-                              rawName: "v-b-toggle.sidebar-right",
-                              modifiers: { "sidebar-right": true },
-                            },
-                          ],
-                          attrs: { variant: "outline-info m-1", size: "sm" },
-                        },
-                        [
-                          _c("i", { staticClass: "i-Filter-2" }),
-                          _vm._v(
-                            "\n          " +
-                              _vm._s(_vm.$t("Filter")) +
-                              "\n        "
-                          ),
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-button",
-                        {
-                          attrs: { size: "sm", variant: "outline-success m-1" },
-                          on: {
-                            click: function ($event) {
-                              return _vm.Product_PDF()
-                            },
-                          },
-                        },
-                        [
-                          _c("i", { staticClass: "i-File-Copy" }),
-                          _vm._v(" PDF\n        "),
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-button",
-                        {
-                          attrs: { size: "sm", variant: "outline-danger m-1" },
-                          on: {
-                            click: function ($event) {
-                              return _vm.Product_Excel()
-                            },
-                          },
-                        },
-                        [
-                          _c("i", { staticClass: "i-File-Excel" }),
-                          _vm._v(" EXCEL\n        "),
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _vm.currentUserPermissions &&
-                      _vm.currentUserPermissions.includes("product_import")
-                        ? _c(
-                            "b-button",
-                            {
-                              attrs: { size: "sm", variant: "info m-1" },
-                              on: {
-                                click: function ($event) {
-                                  return _vm.Show_import_products()
-                                },
-                              },
-                            },
-                            [
-                              _c("i", { staticClass: "i-Download" }),
-                              _vm._v(
-                                "\n          " +
-                                  _vm._s(_vm.$t("import_products")) +
-                                  "\n        "
-                              ),
-                            ]
-                          )
-                        : _vm._e(),
-                      _vm._v(" "),
                       _vm.currentUserPermissions &&
                       _vm.currentUserPermissions.includes("products_add")
                         ? _c(

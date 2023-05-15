@@ -8,14 +8,33 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManagerStatic as Image;
-
+use GuzzleHttp\Client;
 class BrandsController extends Controller
 {
+   
 
+
+ 
     //------------ GET ALL Brands -----------\\
-
+    
     public function index(Request $request)
     {
+
+
+        $perPage = intval($request->limit);
+        $skip = intval($request->pagen);
+        $client = new Client(); 
+        $response = $client->request('GET', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/brands/pagentation?skip='.$skip.'&limit='.$perPage  );
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return response()->json([
+            'brands' => $data['items'],
+            'totalRows' => $data['total'],
+        ]);
+    
+
+
+
         $this->authorizeForUser($request->user('api'), 'view', Brand::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -52,6 +71,40 @@ class BrandsController extends Controller
 
     public function store(Request $request)
     {
+
+
+        if ($request->hasFile('image')) {
+
+            $image = $request->file('image');
+            $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+
+            $image_resize = Image::make($image->getRealPath());
+            $image_resize->resize(200, 200);
+            $image_resize->save(public_path('/images/brands/' . $filename));
+
+        } else {
+            $filename = 'no-image.png';
+        }
+
+        $obj = [
+        
+            "en_title" => $request['en_title'],
+            "ar_title" => $request['ar_title'],
+            "description" => $request['description'],
+            "image" => $filename
+       
+         ];
+
+
+         $client = new Client(); 
+         $response = $client->request('POST', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/brands/' , [
+             'json' => $obj
+         ]);
+         $jsonData = $response->getBody();
+         $data = json_decode($jsonData, true);
+         return   $data;
+
+
         $this->authorizeForUser($request->user('api'), 'create', Brand::class);
 
         request()->validate([
@@ -97,6 +150,45 @@ class BrandsController extends Controller
 
      public function update(Request $request, $id)
      {
+
+
+        if( $request->updateImage  ){
+            if ($request->hasFile('image')) {
+
+                $image = $request->file('image');
+                $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+    
+                $image_resize = Image::make($image->getRealPath());
+                $image_resize->resize(200, 200);
+                $image_resize->save(public_path('/images/brands/' . $filename));
+               
+            } else {
+               
+                $filename =  $request->currentImage;
+            }  
+        }else{
+            $filename =  $request->currentImage;
+        }
+
+
+        $obj = [
+        
+            "en_title" => $request['en_title'],
+            "ar_title" => $request['ar_title'],
+            "description" => $request['description'],
+            "image" => $filename
+       
+         ];
+
+        
+
+         $client = new Client(); 
+         $response = $client->request('PUT', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/brands/'.$id , [
+             'json' => $obj
+         ]);
+         $jsonData = $response->getBody();
+         $data = json_decode($jsonData, true);
+         return   $data;
  
          $this->authorizeForUser($request->user('api'), 'update', Brand::class);
  
@@ -152,6 +244,15 @@ class BrandsController extends Controller
 
     public function destroy(Request $request, $id)
     {
+
+
+
+        $client = new Client(); 
+        $response = $client->request('DELETE', env("URL_HOSTNAME", "http://localhost:8080").'/api/v1.0/brands/'.$id);
+        $jsonData = $response->getBody();
+        $data = json_decode($jsonData, true);
+        return   $data;
+
         $this->authorizeForUser($request->user('api'), 'delete', Brand::class);
 
         Brand::whereId($id)->update([

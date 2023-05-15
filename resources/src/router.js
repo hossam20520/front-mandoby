@@ -25,44 +25,7 @@ const routes = [
                 component: () => import(/* webpackChunkName: "dashboard" */ "./views/app/dashboard/dashboard")
             },
 
-         //numbers
-         {
-            path: "/app/numbers",
-            component: () => import(/* webpackChunkName: "products" */ "./views/app/pages/numbers"),
-            redirect: "app/numbers/list",
-            children: [
-                {
-                    name: "index_products",
-                    path: "list",
-                    component: () =>
-                        import(/* webpackChunkName: "index_products" */"./views/app/pages/products/index_products")
-                },
-                {
-                    path: "store",
-                    name: "store_number",
-                    component: () =>
-                        import(/* webpackChunkName: "store_product" */"./views/app/pages/numbers/Add_number")
-                },
-                {
-                    path: "edit/:id",
-                    name: "edit_product",
-                    component: () =>
-                        import(/* webpackChunkName: "edit_product" */"./views/app/pages/products/Edit_product")
-                },
-                {
-                    path: "detail/:id",
-                    name: "detail_product",
-                    component: () =>
-                        import(/* webpackChunkName: "detail_product" */"./views/app/pages/products/Detail_Product")
-                },
-                {
-                    path: "barcode",
-                    name: "barcode",
-                    component: () =>
-                        import(/* webpackChunkName: "barcode" */"./views/app/pages/products/barcode")
-                },
-            ]
-        },
+    
 
             //Products
             {
@@ -86,7 +49,7 @@ const routes = [
                         path: "edit/:id",
                         name: "edit_product",
                         component: () =>
-                            import(/* webpackChunkName: "edit_product" */"./views/app/pages/products/Edit_product")
+                            import(/* webpackChunkName: "edit_product" */"./views/app/pages/products/Edit_product.vue")
                     },
                     {
                         path: "detail/:id",
@@ -513,6 +476,24 @@ const routes = [
                         component: () =>
                             import(/* webpackChunkName: "Categories" */"./views/app/pages/settings/categorie")
                     },
+
+                    {
+                        name: "pricelists",
+                        path: "pricelists",
+                        component: () =>
+                            import(/* webpackChunkName: "Categories" */"./views/app/pages/settings/price_list")
+                    },
+
+                    {
+                        name: "price_list_items",
+                        path: "edit/:id",
+                        component: () =>
+                            import(/* webpackChunkName: "edit_permission" */
+                                "./views/app/pages/settings/price_list_items"
+                            )
+                    },
+
+                    
 
                     // brands
                     {

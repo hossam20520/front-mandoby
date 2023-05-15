@@ -12,15 +12,7 @@
         @on-page-change="onPageChange"
         @on-per-page-change="onPerPageChange"
         @on-sort-change="onSortChange"
-        @on-search="onSearch"
-        :search-options="{
-        enabled: true,
-        placeholder: $t('Search_this_table'),  
-      }"
-        :select-options="{ 
-          enabled: true ,
-          clearSelectionText: '',
-        }"
+ 
         :pagination-options="{
         enabled: true,
         mode: 'records',
@@ -57,20 +49,41 @@
       <b-modal hide-footer size="md" id="New_Unit" :title="editmode?$t('Edit'):$t('Add')">
         <b-form @submit.prevent="Submit_Unit">
           <b-row>
-            <!-- Name -->
+            <!-- en_title -->
             <b-col md="12">
               <validation-provider
                 name="Code Currency"
                 :rules="{ required: true , max:15}"
                 v-slot="validationContext"
               >
-                <b-form-group :label="$t('Name')">
+                <b-form-group :label="$t('en_title')">
                   <b-form-input
-                    :placeholder="$t('Enter_Name_Unit')"
+                    :placeholder="$t('en_titleEnter_Name_Unit')"
                     :state="getValidationState(validationContext)"
                     aria-describedby="Name-feedback"
-                    label="Name"
-                    v-model="unit.name"
+                    label="en_title"
+                    v-model="unit.en_title"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+
+
+
+        <!-- en_title -->
+           <b-col md="12">
+              <validation-provider
+                name="ar_title"
+                :rules="{ required: true , max:15}"
+                v-slot="validationContext">
+                <b-form-group :label="$t('ar_title')">
+                  <b-form-input
+                    :placeholder="$t('ar_titleEnter_Name_Unit')"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="Name-feedback"
+                    label="ar_title"
+                    v-model="unit.ar_title"
                   ></b-form-input>
                   <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                 </b-form-group>
@@ -97,7 +110,7 @@
               </validation-provider>
             </b-col>
             <!-- Base unit -->
-            <b-col md="12">
+            <!-- <b-col md="12">
               <b-form-group :label="$t('BaseUnit')">
                 <v-select
                   @input="Selected_Base_Unit"
@@ -107,9 +120,9 @@
                   :options="units_base.map(units_base => ({label: units_base.name, value: units_base.id}))"
                 />
               </b-form-group>
-            </b-col>
+            </b-col> -->
             <!-- operator  -->
-            <b-col md="12" v-show="show_operator">
+            <!-- <b-col md="12" v-show="show_operator">
               <b-form-group :label="$t('Operator')">
                 <v-select
                   v-model="unit.operator"
@@ -122,10 +135,10 @@
                         ]"
                 ></v-select>
               </b-form-group>
-            </b-col>
+            </b-col> -->
 
             <!-- Operation Value -->
-            <b-col md="12" v-show="show_operator">
+            <!-- <b-col md="12" v-show="show_operator">
               <validation-provider
                 name="Operation Value"
                 :rules="{ required: true , regex: /^\d*\.?\d*$/}"
@@ -142,7 +155,7 @@
                   <b-form-invalid-feedback id="Operation-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                 </b-form-group>
               </validation-provider>
-            </b-col>
+            </b-col> -->
 
              <b-col md="12" class="mt-3">
                 <b-button variant="primary" type="submit"  :disabled="SubmitProcessing">{{$t('submit')}}</b-button>
@@ -188,12 +201,9 @@ export default {
       show_operator: false,
       unit: {
         id: "",
-        name: "",
-        ShortName: "",
-        base_unit: "",
-        base_unit_name: "",
-        operator: "*",
-        operator_value: 1
+        en_title: "",
+        ar_title: "",
+        ShortName: ""
       }
     };
   },
@@ -202,8 +212,14 @@ export default {
     columns() {
       return [
         {
-          label: this.$t("Name"),
-          field: "name",
+          label: this.$t("en_title"),
+          field: "en_title",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+        {
+          label: this.$t("ar_title"),
+          field: "ar_title",
           tdClass: "text-left",
           thClass: "text-left"
         },
@@ -213,24 +229,7 @@ export default {
           tdClass: "text-left",
           thClass: "text-left"
         },
-        {
-          label: this.$t("BaseUnit"),
-          field: "base_unit_name",
-          tdClass: "text-left",
-          thClass: "text-left"
-        },
-        {
-          label: this.$t("Operator"),
-          field: "operator",
-          tdClass: "text-left",
-          thClass: "text-left"
-        },
-        {
-          label: this.$t("OperationValue"),
-          field: "operator_value",
-          tdClass: "text-left",
-          thClass: "text-left"
-        },
+
         {
           label: this.$t("Action"),
           field: "actions",
@@ -367,7 +366,7 @@ export default {
         .then(response => {
           this.units = response.data.Units;
           this.totalRows = response.data.totalRows;
-          this.units_base = response.data.Units_base;
+          // this.units_base = response.data.Units_base;
 
           // Complete the animation of theprogress bar.
           NProgress.done();
@@ -393,13 +392,11 @@ export default {
     Create_Unit() {
       this.SubmitProcessing = true;
       this.setToStrings();
-      axios
-        .post("units", {
-          name: this.unit.name,
+      axios.post("units", {
+          ar_title: this.unit.ar_title,
+          en_title: this.unit.en_title,
           ShortName: this.unit.ShortName,
-          base_unit: this.unit.base_unit,
-          operator: this.unit.operator,
-          operator_value: this.unit.operator_value
+  
         })
         .then(response => {
            this.SubmitProcessing = false;
@@ -423,11 +420,9 @@ export default {
       this.setToStrings();
       axios
         .put("units/" + this.unit.id, {
-          name: this.unit.name,
+          ar_title: this.unit.ar_title,
+          en_title: this.unit.en_title,
           ShortName: this.unit.ShortName,
-          base_unit: this.unit.base_unit,
-          operator: this.unit.operator,
-          operator_value: this.unit.operator_value
         })
         .then(response => {
           this.SubmitProcessing = false;
@@ -448,13 +443,10 @@ export default {
     //------------------------------ reset Form ------------------------------\\
     reset_Form() {
       this.unit = {
-        id: "",
-        name: "",
-        ShortName: "",
-        base_unit: "",
-        base_unit_name: "",
-        operator: "*",
-        operator_value: 1
+          id: "",
+          ar_title:"",
+          en_title:  "",
+          ShortName:  "",
       };
     },
 
@@ -474,27 +466,21 @@ export default {
           axios
             .delete("units/" + id)
             .then(response => {
-              if (response.data.success) {
+           
                 this.$swal(
                   this.$t("Delete.Deleted"),
                   this.$t("Delete.UnitDeleted"),
                   "success"
                 );
-              } else {
-                this.$swal(
-                  this.$t("Delete.Failed"),
-                  this.$t("Unit_already_linked_with_sub_unit"),
-                  "warning"
-                );
-              }
+            
               Fire.$emit("Delete_Unit");
             })
             .catch(() => {
-              this.$swal(
-                this.$t("Delete.Failed"),
-                this.$t("Delete.Therewassomethingwronge"),
-                "warning"
-              );
+              // this.$swal(
+              //   this.$t("Delete.Failed"),
+              //   this.$t("Delete.Therewassomethingwronge"),
+              //   "warning"
+              // );
             });
         }
       });

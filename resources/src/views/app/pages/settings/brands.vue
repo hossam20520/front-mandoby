@@ -12,16 +12,10 @@
         @on-page-change="onPageChange"
         @on-per-page-change="onPerPageChange"
         @on-sort-change="onSortChange"
-        @on-search="onSearch"
-        :search-options="{
-        enabled: true,
-        placeholder: $t('Search_this_table'),  
-      }"
-        :select-options="{ 
-          enabled: true ,
-          clearSelectionText: '',
-        }"
-        @on-selected-rows-change="selectionChanged"
+      
+ 
+   
+ 
         :pagination-options="{
         enabled: true,
         mode: 'records',
@@ -74,13 +68,34 @@
                 :rules="{ required: true , min:3 , max:20}"
                 v-slot="validationContext"
               >
-                <b-form-group :label="$t('BrandName')">
+                <b-form-group :label="$t('en_title')">
                   <b-form-input
-                    :placeholder="$t('Enter_Name_Brand')"
+                    :placeholder="$t('Enter_en_Name_Brand')"
                     :state="getValidationState(validationContext)"
                     aria-describedby="Name-feedback"
-                    label="Name"
-                    v-model="brand.name"
+                    label="en_title"
+                    v-model="brand.en_title"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+
+
+
+            <b-col md="12">
+              <validation-provider
+                name="ar Brand Name"
+                :rules="{ required: true , min:3 , max:20}"
+                v-slot="validationContext"
+              >
+                <b-form-group :label="$t('BrandName')">
+                  <b-form-input
+                    :placeholder="$t('Enter_ar_Name_Brand')"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="Name-feedback"
+                    label="ar_title"
+                    v-model="brand.ar_title"
                   ></b-form-input>
                   <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                 </b-form-group>
@@ -163,15 +178,18 @@ export default {
       selectedIds: [],
       totalRows: "",
       search: "",
+      updateImage:false,
       data: new FormData(),
       editmode: false,
       brands: [],
       limit: "10",
       brand: {
         id: "",
-        name: "",
+        en_title: "",
+         ar_title: "",
         description: "",
-        image: ""
+        image: "",
+        currentImage:"",
       }
     };
   },
@@ -185,13 +203,22 @@ export default {
           thClass: "text-left"
         },
         {
-          label: this.$t("BrandName"),
-          field: "name",
+          label: this.$t("ar_title"),
+          field: "ar_title",
           tdClass: "text-left",
           thClass: "text-left"
         },
+
         {
-          label: this.$t("BrandDescription"),
+          label: this.$t("en_title"),
+          field: "en_title",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+
+        
+        {
+          label: this.$t("desca"),
           field: "description",
           tdClass: "text-left",
           thClass: "text-left"
@@ -296,8 +323,10 @@ export default {
       const { valid } = await this.$refs.Image.validate(e);
 
       if (valid) {
+        this.updateImage = true;
         this.brand.image = e.target.files[0];
       } else {
+        this.updateImage = true;
         this.brand.image = "";
       }
     },
@@ -314,6 +343,7 @@ export default {
       this.Get_Brands(this.serverParams.page);
       this.reset_Form();
       this.brand = brand;
+      this.brand.currentImage = brand.image;
       this.editmode = true;
       this.$bvModal.show("New_brand");
     },
@@ -357,7 +387,8 @@ export default {
     Create_Brand() {
       var self = this;
       self.SubmitProcessing = true;
-      self.data.append("name", self.brand.name);
+      self.data.append("en_title", self.brand.en_title);
+      self.data.append("ar_title", self.brand.ar_title);
       self.data.append("description", self.brand.description);
       self.data.append("image", self.brand.image);
       axios
@@ -365,7 +396,7 @@ export default {
         .then(response => {
           self.SubmitProcessing = false;
           Fire.$emit("Event_Brand");
-
+          this.updateImage = false;
           this.makeToast(
             "success",
             this.$t("Create.TitleBrand"),
@@ -382,17 +413,21 @@ export default {
     Update_Brand() {
       var self = this;
        self.SubmitProcessing = true;
-      self.data.append("name", self.brand.name);
+       self.data.append("en_title", self.brand.en_title);
+      self.data.append("ar_title", self.brand.ar_title);
       self.data.append("description", self.brand.description);
       self.data.append("image", self.brand.image);
+      self.data.append("updateImage", self.updateImage);
+      self.data.append("currentImage", self.brand.currentImage);
       self.data.append("_method", "put");
 
       axios
         .post("brands/" + self.brand.id, self.data)
         .then(response => {
+     
            self.SubmitProcessing = false;
           Fire.$emit("Event_Brand");
-
+          this.updateImage = false;
           this.makeToast(
             "success",
             this.$t("Update.TitleBrand"),

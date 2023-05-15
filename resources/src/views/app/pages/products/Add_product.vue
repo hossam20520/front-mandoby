@@ -9,25 +9,53 @@
           <b-col md="8">
             <b-card>
               <b-row>
-                <!-- Name -->
+                <!-- en_title -->
                 <b-col md="6" class="mb-2">
                   <validation-provider
-                    name="Name"
+                    name="en_title"
                     :rules="{required:true , min:3 , max:55}"
                     v-slot="validationContext"
                   >
-                    <b-form-group :label="$t('Name_product')">
+                    <b-form-group :label="$t('en_title')">
                       <b-form-input
                         :state="getValidationState(validationContext)"
                         aria-describedby="Name-feedback"
-                        label="Name"
-                        :placeholder="$t('Enter_Name_Product')"
-                        v-model="product.name"
+                        label="en_title"
+                        :placeholder="$t('Enter_en_title_Product')"
+                        v-model="product.en_title"
                       ></b-form-input>
                       <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+
+
+
+                            <!-- ar_title -->
+            <b-col md="6" class="mb-2">
+                  <validation-provider
+                    name="ar_title"
+                    :rules="{required:true , min:3 , max:55}"
+                    v-slot="validationContext">
+                    <b-form-group :label="$t('ar_title')">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="Name-feedback"
+                        label="ar_title"
+                        :placeholder="$t('Enter_ar_title_Product')"
+                        v-model="product.ar_title"
+                      ></b-form-input>
+                      <b-form-invalid-feedback id="Name-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+
+
+
+
+
+             
+        
 
                 <!-- Code Product"-->
                 <b-col md="6" class="mb-2">
@@ -44,13 +72,7 @@
                           type="text"
                           v-model="product.code"
                         ></b-form-input>
-                        <!-- <div class="input-group-append">
-                          <span class="input-group-text">
-                            <a @click="generateNumber()">
-                              <i class="i-Bar-Code"></i>
-                            </a>
-                          </span>
-                        </div> -->
+                 
                         <b-form-invalid-feedback id="CodeProduct-feedback">{{ errors[0] }}</b-form-invalid-feedback>
                       </div>
                         <span>{{$t('Scan_your_barcode_and_select_the_correct_symbology_below')}}</span>
@@ -64,6 +86,11 @@
                   </validation-provider>
                 </b-col>
 
+
+                
+ 
+
+
                 <!-- Category -->
                 <b-col md="6" class="mb-2">
                   <validation-provider name="category" :rules="{ required: true}">
@@ -74,13 +101,14 @@
                         :reduce="label => label.value"
                         :placeholder="$t('Choose_Category')"
                         v-model="product.category_id"
-                        :options="categories.map(categories => ({label: categories.name, value: categories.id}))"
+                        :options="categories.map(categories => ({label: categories.ar_title, value: categories.id}))"
                       />
                       <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
                   </validation-provider>
                 </b-col>
-
+      
+        
                 <!-- Brand  -->
                 <b-col md="6" class="mb-2">
                   <b-form-group :label="$t('Brand')">
@@ -88,10 +116,12 @@
                       :placeholder="$t('Choose_Brand')"
                       :reduce="label => label.value"
                       v-model="product.brand_id"
-                      :options="brands.map(brands => ({label: brands.name, value: brands.id}))"
+                      :options="brands.map(brands => ({label: brands.ar_title, value: brands.id}))"
                     />
                   </b-form-group>
                 </b-col>
+
+
 
                 <!-- Barcode Symbology  -->
                 <b-col md="6" class="mb-2">
@@ -175,7 +205,7 @@
                         @input="Selected_Unit"
                         :placeholder="$t('Choose_Unit_Product')"
                         :reduce="label => label.value"
-                        :options="units.map(units => ({label: units.name, value: units.id}))"
+                        :options="units.map(units => ({label: units.ar_title, value: units.id}))"
                       />
                       <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
@@ -192,7 +222,7 @@
                         v-model="product.unit_sale_id"
                         :placeholder="$t('Choose_Unit_Sale')"
                         :reduce="label => label.value"
-                        :options="units_sub.map(units_sub => ({label: units_sub.name, value: units_sub.id}))"
+                        :options="units.map(units => ({label: units.ar_title, value: units.id}))"
                       />
                       <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
@@ -243,8 +273,7 @@
                   <validation-provider
                     name="Order Tax"
                     :rules="{regex: /^\d*\.?\d*$/}"
-                    v-slot="validationContext"
-                  >
+                    v-slot="validationContext">
                     <b-form-group :label="$t('OrderTax')">
                       <div class="input-group">
                         <input
@@ -285,6 +314,30 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+
+
+                
+                  
+                 
+
+
+
+                <b-col md="12" class="mb-2">
+ 
+                  <b-form-group :label="$t('desc')">
+                    <textarea
+                      rows="4"
+                  
+               
+                      class="form-control"
+                      :placeholder="$t('desc')"
+                      v-model="product.desc"
+                    ></textarea>
+                  </b-form-group>
+                 
+               
+                </b-col>
+
 
                 <b-col md="12" class="mb-2">
                   <b-form-group :label="$t('Note')">
@@ -393,7 +446,8 @@ export default {
       roles: {},
       variants: [],
       product: {
-        name: "",
+        en_title: "",
+        ar_title: "",
         code: "",
         Type_barcode: "",
         cost: "",
@@ -407,8 +461,11 @@ export default {
         unit_purchase_id: "",
         stock_alert: "0",
         image: "",
+        desc:"",
         note: "",
-        is_variant: false
+        is_variant: false,
+        discound:0,
+        slug:'',
       },
       code_exist: ""
     };
@@ -536,11 +593,16 @@ export default {
           });
         }
       }
+        
 
+      // console.log(self.images)
+      // return true
+  
       // Send Data with axios
-      axios
-        .post("Products", self.data)
-        .then(response => {
+      axios.post("Products", self.data).then(response => {
+              
+          console.log(response.data)
+          // return true;
           // Complete the animation of theprogress bar.
           NProgress.done();
           self.SubmitProcessing = false;
