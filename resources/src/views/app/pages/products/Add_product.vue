@@ -239,7 +239,7 @@
                         v-model="product.unit_purchase_id"
                         :placeholder="$t('Choose_Unit_Purchase')"
                         :reduce="label => label.value"
-                        :options="units_sub.map(units_sub => ({label: units_sub.name, value: units_sub.id}))"
+                        :options="units.map(units => ({label: units.ar_title, value: units.id}))"
                       />
                       <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>

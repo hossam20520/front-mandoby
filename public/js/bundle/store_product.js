@@ -2899,19 +2899,15 @@ var render = function () {
                                                         ) {
                                                           return label.value
                                                         },
-                                                        options:
-                                                          _vm.units_sub.map(
-                                                            function (
-                                                              units_sub
-                                                            ) {
-                                                              return {
-                                                                label:
-                                                                  units_sub.name,
-                                                                value:
-                                                                  units_sub.id,
-                                                              }
+                                                        options: _vm.units.map(
+                                                          function (units) {
+                                                            return {
+                                                              label:
+                                                                units.ar_title,
+                                                              value: units.id,
                                                             }
-                                                          ),
+                                                          }
+                                                        ),
                                                       },
                                                       model: {
                                                         value:
@@ -2947,7 +2943,7 @@ var render = function () {
                                           ],
                                           null,
                                           false,
-                                          3136313157
+                                          2808114862
                                         ),
                                       }),
                                     ],
